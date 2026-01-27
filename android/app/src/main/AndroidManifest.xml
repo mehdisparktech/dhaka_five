@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="dhaka_five"
+        android:label="দাঁড়িপাল্লা"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
