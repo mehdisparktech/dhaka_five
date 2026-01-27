@@ -61,17 +61,11 @@ class VoterPage extends StatelessWidget {
                       AppTexts.subtitle,
                       style: const TextStyle(
                         fontSize: 16,
-                        color: AppColors.textLight,
+                        color: AppColors.textDark,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      AppTexts.writeInBangla,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: AppColors.textLight,
-                      ),
-                    ),
+
                     const SizedBox(height: 10),
                     // Search Form
                     Container(
@@ -112,7 +106,7 @@ class VoterPage extends StatelessWidget {
                                 const SizedBox(height: 16),
                                 Text(
                                   isVoterId
-                                      ? 'ভোটার আইডি নম্বর (বাংলায় লিখুন)'
+                                      ? 'ভোটার আইডি নম্বর'
                                       : 'নাম (বাংলায় লিখুন)',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,

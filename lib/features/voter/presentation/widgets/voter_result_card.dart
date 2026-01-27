@@ -12,8 +12,9 @@ class VoterResultCard extends StatelessWidget {
     final String name = (voter['name'] ?? '').toString();
     final String fathersName = (voter['fathers_name'] ?? '').toString();
     // API theke asha `serial` key use korbo, na paile `voter_id`
-    final String serial =
-        (voter['serial'] ?? voter['voter_id'] ?? '').toString().trim();
+    final String serial = (voter['serial'] ?? voter['voter_id'] ?? '')
+        .toString()
+        .trim();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -51,29 +52,24 @@ class VoterResultCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
+
           // ডানে Serial + arrow (image er moto)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                serial.isEmpty ? '-' : '#$serial',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(height: 6),
-              const Icon(
-                Icons.arrow_forward_ios,
-                size: 14,
-                color: AppColors.textLight,
-              ),
-            ],
+          Text(
+            serial.isEmpty ? '-' : '#$serial',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(width: 6),
+          const Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+            color: AppColors.textLight,
           ),
         ],
       ),
     );
   }
 }
-

@@ -42,6 +42,18 @@ class _VoterDetailPageState extends State<VoterDetailPage> {
       _field('dob', fallback: _field('date_of_birth', fallback: '-'));
   String get _gender => _field('gender', fallback: '-');
   String get _address => _field('address');
+  String get _area {
+    final area = voter['area'];
+    if (area is Map) {
+      final local = area['local_administrative_area']?.toString().trim();
+      if (local != null && local.isNotEmpty) {
+        return local;
+      }
+    }
+    // যদি কখনও API সরাসরি "area" স্ট্রিং হিসেবে ফেরত দেয় বা কিছুই না থাকে
+    return _field('area', fallback: 'তথ্য নেই');
+  }
+
   String get _centerName {
     // নতুন API: vote_center.name, পুরোনো ফ্ল্যাট ফরম্যাট: center_name / center
     final voteCenter = voter['vote_center'];
@@ -168,11 +180,12 @@ class _VoterDetailPageState extends State<VoterDetailPage> {
           child: RepaintBoundary(
             key: _previewKey,
             child: Container(
+              padding: const EdgeInsets.all(8),
               width: 430,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: const Color(0xFF09575b), width: 4),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -181,57 +194,17 @@ class _VoterDetailPageState extends State<VoterDetailPage> {
                   // Top banner (candidate + slogan) – using existing cover image
                   ClipRRect(
                     borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
+                      topLeft: Radius.circular(8),
+                      topRight: Radius.circular(8),
                     ),
                     child: Stack(
                       children: [
                         SizedBox(
-                          height: 220,
+                          height: 230,
                           width: double.infinity,
                           child: Image.asset(
                             'assets/images/cover.png',
                             fit: BoxFit.cover,
-                          ),
-                        ),
-                        Positioned(
-                          left: 16,
-                          bottom: 16,
-                          right: 16,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                'ভোটারের তথ্য',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black54,
-                                      blurRadius: 4,
-                                      offset: Offset(0, 1),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                'আপনার মূল্যবান ভোট, সঠিক তথ্যের মাধ্যমে নিশ্চিত করুন',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black38,
-                                      blurRadius: 4,
-                                      offset: Offset(0, 1),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
                           ),
                         ),
                       ],
@@ -264,6 +237,7 @@ class _VoterDetailPageState extends State<VoterDetailPage> {
                           style: const TextStyle(
                             fontSize: 14,
                             color: AppColors.textDark,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                         if (_centerInfo.isNotEmpty) ...[
@@ -271,8 +245,9 @@ class _VoterDetailPageState extends State<VoterDetailPage> {
                           Text(
                             _centerInfo,
                             style: const TextStyle(
-                              fontSize: 13,
-                              color: AppColors.textLight,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textDark,
                             ),
                           ),
                         ],
@@ -284,13 +259,14 @@ class _VoterDetailPageState extends State<VoterDetailPage> {
                     child: Column(
                       children: [
                         _InfoRow(label: 'নাম', value: _name),
+                        _InfoRow(label: 'সিরিয়াল নং', value: _serial),
                         _InfoRow(label: 'পিতা', value: _fatherName),
                         _InfoRow(label: 'মাতা', value: _motherName),
                         _InfoRow(label: 'স্বামী/স্ত্রী', value: _husbandName),
                         _InfoRow(label: 'ভোটার নং', value: _voterId),
-                        _InfoRow(label: 'সিরিয়াল নং', value: _serial),
                         _InfoRow(label: 'জন্ম তারিখ', value: _dob),
                         _InfoRow(label: 'লিঙ্গ', value: _gender),
+                        _InfoRow(label: 'এলাকাঃ', value: _area),
                         _InfoRow(label: 'ঠিকানা', value: _address),
                       ],
                     ),
@@ -307,31 +283,19 @@ class _VoterDetailPageState extends State<VoterDetailPage> {
                         bottomRight: Radius.circular(16),
                       ),
                     ),
-                    child: Row(
-                      children: const [
-                        Expanded(
-                          child: Text(
-                            '''মোহাম্মদ কামাল হোসেন এর সালাম নিন, দাঁড়িপাল্লা মার্কায় ভোট দিন।তারুন্যের প্রথম ভোট, দাঁড়িপাল্লা মার্কার পক্ষে হোক।''',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.textLight,
-                            ),
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            softWrap: true,
-                          ),
+                    child: Expanded(
+                      child: Text(
+                        '''মোহাম্মদ কামাল হোসেন এর সালাম নিন, দাঁড়িপাল্লা মার্কায় ভোট দিন।তারুন্যের প্রথম ভোট, দাঁড়িপাল্লা মার্কার পক্ষে হোক।''',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
                         ),
-                        SizedBox(width: 8),
-                        Text(
-                          'ধন্যবাদ',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ],
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        softWrap: true,
+                      ),
                     ),
                   ),
                 ],
@@ -387,7 +351,7 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.border)),
       ),
