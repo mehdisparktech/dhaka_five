@@ -1,8 +1,8 @@
+import 'package:dhaka_five/features/voter/presentation/page/voter_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'core/constants/app_theme.dart';
-import 'features/splash/presentation/page/splash_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      home: const SplashPage(),
+      home: VoterPage(),
     );
   }
 }
