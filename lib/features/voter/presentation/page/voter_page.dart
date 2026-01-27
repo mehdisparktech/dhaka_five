@@ -6,12 +6,9 @@ import '../../../../core/constants/app_texts.dart';
 import '../../../../core/widgets/app_dropdown.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/dob_input_row.dart';
-import '../../../../core/widgets/empty_state.dart';
-import '../../../../core/widgets/error_bottom_sheet.dart';
-import '../../../../core/widgets/loading_view.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../presenter/voter_presenter.dart';
-import '../widgets/voter_result_card.dart';
+import 'voter_result_page.dart';
 
 class VoterPage extends StatelessWidget {
   VoterPage({super.key});
@@ -44,7 +41,8 @@ class VoterPage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
                       height: 240,
@@ -66,8 +64,15 @@ class VoterPage extends StatelessWidget {
                         color: AppColors.textLight,
                       ),
                     ),
-                    const SizedBox(height: 20),
-
+                    const SizedBox(height: 10),
+                    Text(
+                      AppTexts.writeInBangla,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: AppColors.textLight,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     // Search Form
                     Container(
                       padding: const EdgeInsets.all(20),
@@ -79,27 +84,53 @@ class VoterPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            AppTexts.searchType,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          AppDropdown(
-                            value: AppTexts.name,
-                            items: const [AppTexts.name],
-                            onChanged: (_) {},
-                          ),
+                          Obx(() {
+                            final isVoterId =
+                                presenter.searchType.value ==
+                                AppTexts.voterIdNumber;
 
-                          const SizedBox(height: 16),
-                          const Text(
-                            'নাম (ইংরেজিতে)',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          AppTextField(
-                            hint: 'নাম লিখুন...',
-                            controller: presenter.nameController,
-                          ),
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  AppTexts.searchType,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 8),
+                                AppDropdown(
+                                  value: presenter.searchType.value,
+                                  items: const [
+                                    AppTexts.name,
+                                    AppTexts.voterIdNumber,
+                                  ],
+                                  onChanged: (value) {
+                                    if (value == null) return;
+                                    presenter.searchType.value = value;
+                                    presenter.nameController.clear();
+                                  },
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  isVoterId
+                                      ? 'ভোটার আইডি নম্বর (বাংলায় লিখুন)'
+                                      : 'নাম (বাংলায় লিখুন)',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                AppTextField(
+                                  hint: isVoterId
+                                      ? 'ভোটার আইডি নম্বর লিখুন'
+                                      : 'নাম লিখুন...',
+                                  controller: presenter.nameController,
+                                  keyboardType: isVoterId
+                                      ? TextInputType.number
+                                      : TextInputType.text,
+                                ),
+                              ],
+                            );
+                          }),
 
                           const SizedBox(height: 16),
                           const Text(
@@ -121,71 +152,42 @@ class VoterPage extends StatelessWidget {
                                   )
                                 : PrimaryButton(
                                     text: AppTexts.search,
-                                    onTap: () {
+                                    onTap: () async {
                                       FocusScope.of(context).unfocus();
-                                      presenter.search();
+                                      await presenter.search();
+                                      final voters = presenter.state.voters;
+                                      if (voters.isNotEmpty) {
+                                        Get.to(
+                                          () => VoterResultPage(
+                                            voters: List.from(voters),
+                                          ),
+                                        );
+                                      } else {
+                                        Get.dialog(
+                                          AlertDialog(
+                                            title: const Text('দুঃখিত'),
+                                            content: const Text(
+                                              'কোন ফলাফল পাওয়া যায়নি',
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Get.back(),
+                                                child: const Text('ঠিক আছে'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }
                                     },
                                   ),
                           ),
                         ],
                       ),
                     ),
-
-                    const SizedBox(height: 24),
-                    const Text(
-                      'ফলাফল',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
                   ],
                 ),
               ),
             ),
-
-            // Results List
-            Obx(() {
-              final state = presenter.state;
-
-              if (state.error != null) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  ErrorBottomSheet.show(state.error!);
-                });
-              }
-
-              if (state.loading) {
-                return const SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: LoadingView(),
-                );
-              }
-
-              if (state.voters.isEmpty) {
-                return const SliverToBoxAdapter(
-                  child: EmptyState(message: 'কোন ফলাফল পাওয়া যায়নি'),
-                );
-              }
-
-              return SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    if (index == state.voters.length) {
-                      if (state.loadingMore) {
-                        return const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    }
-                    return VoterResultCard(voter: state.voters[index]);
-                  }, childCount: state.voters.length + (state.hasMore ? 1 : 0)),
-                ),
-              );
-            }),
 
             // Bottom spacing
             const SliverToBoxAdapter(child: SizedBox(height: 20)),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constants/app_texts.dart';
 import '../../../../core/utils/digit_converter.dart';
 import '../../../../core/utils/validators.dart';
 import '../../data/voter_remote_source.dart';
@@ -15,15 +16,26 @@ class VoterPresenter extends GetxController {
   final monthController = TextEditingController();
   final yearController = TextEditingController();
 
+  /// Current search type label (e.g., "নাম", "ভোটার আইডি নম্বর")
+  final RxString searchType = AppTexts.name.obs;
+
+  bool get isSearchByVoterId => searchType.value == AppTexts.voterIdNumber;
+
   int page = 1;
 
   Future<void> search({bool loadMore = false}) async {
-    final d = DigitConverter.bnToEn(dayController.text);
-    final m = DigitConverter.bnToEn(monthController.text);
-    final y = DigitConverter.bnToEn(yearController.text);
-    final name = nameController.text;
+    // ইউজারের কাঁচা ইনপুট (বাংলা/ইংরেজি মিলিয়ে যা আছে)
+    final rawName = nameController.text;
+    final rawDay = dayController.text;
+    final rawMonth = monthController.text;
+    final rawYear = yearController.text;
 
-    if (Validators.isEmpty(name) || !Validators.validDate(d, m, y)) {
+    // ভ্যালিডেশনের সুবিধার জন্য আগে ডিজিটগুলো ইংরেজিতে রূপান্তর করছি
+    final dEn = DigitConverter.bnToEn(rawDay);
+    final mEn = DigitConverter.bnToEn(rawMonth);
+    final yEn = DigitConverter.bnToEn(rawYear);
+
+    if (Validators.isEmpty(rawName) || !Validators.validDate(dEn, mEn, yEn)) {
       _state.value = state.copyWith(error: 'সঠিক তথ্য প্রদান করুন');
       return;
     }
@@ -49,14 +61,21 @@ class VoterPresenter extends GetxController {
       // but "VoterRemoteSource().search({...})" was used in the RemoteSource definition.
       // I will reconcile this by passing the payload.
 
+      // API তে ডাটা সবসময় বাংলায় পাঠানোর জন্য
+      // (ইউজার ইংরেজি ডিজিট লিখলে সেটাকেও বাংলায় কনভার্ট করছি)
+      final searchValueBn = DigitConverter.enToBn(rawName);
+      final dobDayBn = DigitConverter.enToBn(dEn);
+      final dobMonthBn = DigitConverter.enToBn(mEn);
+      final dobYearBn = DigitConverter.enToBn(yEn);
+
       final payload = {
         '_token':
             'mdTRZn45HczSi8scIXxxCE1TSseo16sbIeYaHZiy', // This probably should be dynamic or fetched, but hardcoded in prompt
-        'search_type': 'name',
-        'search_value': name,
-        'dob_day': d,
-        'dob_month': m,
-        'dob_year': y,
+        'search_type': isSearchByVoterId ? 'voter_id' : 'name',
+        'search_value': searchValueBn,
+        'dob_day': dobDayBn,
+        'dob_month': dobMonthBn,
+        'dob_year': dobYearBn,
         // 'page': page, // If the API supports it
       };
 

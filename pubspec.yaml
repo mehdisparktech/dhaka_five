@@ -40,6 +40,8 @@ dependencies:
   dio_cookie_manager: ^3.3.0
   path_provider: ^2.1.5
   html: ^0.15.4
+  pdf: ^3.10.8
+  printing: ^5.12.0
 
 dev_dependencies:
   flutter_test:

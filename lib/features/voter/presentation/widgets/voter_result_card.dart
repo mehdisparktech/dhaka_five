@@ -9,101 +9,71 @@ class VoterResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String name = (voter['name'] ?? '').toString();
+    final String fathersName = (voter['fathers_name'] ?? '').toString();
+    // API theke asha `serial` key use korbo, na paile `voter_id`
+    final String serial =
+        (voter['serial'] ?? voter['voter_id'] ?? '').toString().trim();
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AppColors.border),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // বামে নাম + পিতার নাম
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name.isEmpty ? 'নাম পাওয়া যায়নি' : name,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textDark,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'পিতা: ${fathersName.isEmpty ? 'তথ্য নেই' : fathersName}',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textLight,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          // ডানে Serial + arrow (image er moto)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                serial.isEmpty ? '-' : '#$serial',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Icon(
+                Icons.arrow_forward_ios,
+                size: 14,
+                color: AppColors.textLight,
+              ),
+            ],
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                  child: Text(
-                    (voter['name'] ?? 'U')[0],
-                    style: const TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        voter['name'] ?? 'N/A',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textDark,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'পিতা/স্বামী: ${voter['father_name'] ?? voter['husband_name'] ?? 'N/A'}',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: AppColors.textLight,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Divider(height: 1, color: AppColors.border),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildInfoItem('NID', voter['nid'] ?? '-'),
-                _buildInfoItem('জন্ম তারিখ', voter['dob'] ?? '-'),
-                _buildInfoItem('Voter No', voter['voter_no'] ?? '-'),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoItem(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, color: AppColors.textLight),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
-        ),
-      ],
     );
   }
 }
+
