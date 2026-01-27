@@ -7,9 +7,8 @@ class VoterRemoteSource {
     final dio = await DioClient.instance;
 
     try {
-      // init session (mimicking browser behavior)
-      await dio.get('/mohammad-kamal-hosen');
-
+      // CSRF token is automatically injected by Dio interceptor
+      // Token initialization happens in DioClient.instance
       final res = await dio.post(
         '/mohammad-kamal-hosen/result',
         data: FormData.fromMap(payload),

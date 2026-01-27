@@ -68,9 +68,9 @@ class VoterPresenter extends GetxController {
       final dobMonthBn = DigitConverter.enToBn(mEn);
       final dobYearBn = DigitConverter.enToBn(yEn);
 
+      // CSRF token is automatically injected by Dio interceptor
+      // No need to include _token in payload
       final payload = {
-        '_token':
-            'mdTRZn45HczSi8scIXxxCE1TSseo16sbIeYaHZiy', // This probably should be dynamic or fetched, but hardcoded in prompt
         'search_type': isSearchByVoterId ? 'voter_id' : 'name',
         'search_value': searchValueBn,
         'dob_day': dobDayBn,
