@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/constants/app_texts.dart';
+import '../../../../core/services/nid_ocr_service.dart';
 import '../../../../core/utils/digit_converter.dart';
 import '../../../../core/utils/validators.dart';
 import '../../data/voter_history_service.dart';
@@ -26,6 +29,10 @@ class VoterPresenter extends GetxController {
 
   int page = 1;
   final VoterHistoryService _historyService = VoterHistoryService();
+  final NidOcrService _ocrService = NidOcrService();
+  
+  final RxBool isProcessingOcr = false.obs;
+  final Rxn<File> selectedImage = Rxn<File>();
 
   Future<void> search({bool loadMore = false}) async {
     // ইউজারের কাঁচা ইনপুট (বাংলা/ইংরেজি মিলিয়ে যা আছে)
@@ -146,5 +153,111 @@ class VoterPresenter extends GetxController {
         error: e.toString(),
       );
     }
+  }
+
+  /// Pick image from camera and process OCR
+  Future<void> pickImageAndExtractData() async {
+    try {
+      isProcessingOcr.value = true;
+      
+      // Pick image from camera
+      final XFile? imageFile = await _ocrService.pickImageFromCamera();
+      
+      if (imageFile == null) {
+        Get.snackbar(
+          'সতর্কতা',
+          'কোন ছবি নির্বাচন করা হয়নি',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        isProcessingOcr.value = false;
+        return;
+      }
+
+      selectedImage.value = File(imageFile.path);
+
+      // Show processing message
+      Get.snackbar(
+        'প্রক্রিয়াকরণ',
+        'ছবি থেকে তথ্য পড়া হচ্ছে...',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+      );
+
+      // Extract text from image
+      final extractedText = await _ocrService.extractTextFromImage(imageFile.path);
+      
+      if (extractedText.isEmpty) {
+        Get.snackbar(
+          'ত্রুটি',
+          'ছবি থেকে কোনো লেখা পাওয়া যায়নি। দয়া করে আবার চেষ্টা করুন।',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        isProcessingOcr.value = false;
+        return;
+      }
+
+      // Parse the extracted text
+      final parsedData = _ocrService.parseNidCardText(extractedText);
+
+      // Auto-fill the form fields
+      if (parsedData['name'] != null && parsedData['name']!.isNotEmpty) {
+        nameController.text = parsedData['name']!;
+      }
+
+      if (parsedData['day'] != null && parsedData['day']!.isNotEmpty) {
+        // Convert English digits to Bengali if needed
+        dayController.text = DigitConverter.enToBn(parsedData['day']!);
+      }
+
+      if (parsedData['month'] != null && parsedData['month']!.isNotEmpty) {
+        monthController.text = DigitConverter.enToBn(parsedData['month']!);
+      }
+
+      if (parsedData['year'] != null && parsedData['year']!.isNotEmpty) {
+        yearController.text = DigitConverter.enToBn(parsedData['year']!);
+      }
+
+      // Show success message
+      final name = parsedData['name'] ?? '';
+      final day = parsedData['day'] ?? '';
+      final month = parsedData['month'] ?? '';
+      final year = parsedData['year'] ?? '';
+      
+      if (name.isNotEmpty || 
+          (day.isNotEmpty && month.isNotEmpty && year.isNotEmpty)) {
+        Get.snackbar(
+          'সফল',
+          'তথ্য স্বয়ংক্রিয়ভাবে পূরণ করা হয়েছে',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          'সতর্কতা',
+          'ছবি থেকে নাম বা জন্ম তারিখ পাওয়া যায়নি। দয়া করে নিজে লিখুন।',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+
+      isProcessingOcr.value = false;
+    } catch (e) {
+      isProcessingOcr.value = false;
+      Get.snackbar(
+        'ত্রুটি',
+        'ছবি প্রক্রিয়াকরণে সমস্যা হয়েছে: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    dayController.dispose();
+    monthController.dispose();
+    yearController.dispose();
+    _ocrService.dispose();
+    super.onClose();
   }
 }

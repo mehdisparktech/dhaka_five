@@ -88,6 +88,101 @@ class VoterPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Camera Button for NID Card OCR
+                          Obx(() => Container(
+                                width: double.infinity,
+                                margin: const EdgeInsets.only(bottom: 16),
+                                child: ElevatedButton.icon(
+                                  onPressed: presenter.isProcessingOcr.value
+                                      ? null
+                                      : () => presenter.pickImageAndExtractData(),
+                                  icon: presenter.isProcessingOcr.value
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor: AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
+                                          ),
+                                        )
+                                      : const Icon(Icons.camera_alt),
+                                  label: Text(
+                                    presenter.isProcessingOcr.value
+                                        ? 'প্রক্রিয়াকরণ...'
+                                        : 'NID কার্ডের ছবি তুলুন',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.textDark,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                      horizontal: 20,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                ),
+                              )),
+                          Obx(() {
+                            if (presenter.selectedImage.value != null) {
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 16),
+                                child: Row(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.file(
+                                        presenter.selectedImage.value!,
+                                        width: 60,
+                                        height: 60,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'ছবি নির্বাচিত হয়েছে',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            'তথ্য স্বয়ংক্রিয়ভাবে পূরণ করা হয়েছে',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: AppColors.textDark
+                                                  .withOpacity(0.6),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.close),
+                                      onPressed: () {
+                                        presenter.selectedImage.value = null;
+                                      },
+                                      tooltip: 'ছবি সরান',
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          }),
                           Obx(() {
                             final currentType = presenter.searchType.value;
                             final isVoterId =

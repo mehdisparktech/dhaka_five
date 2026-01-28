@@ -14,6 +14,9 @@
     <!-- For Android 13+ (API 33+) - Scoped storage -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     
+    <!-- Camera permission - Required for NID card OCR -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    
     <application
         android:label="দাঁড়িপাল্লা"
         android:name="${applicationName}"
