@@ -8,6 +8,7 @@ import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/dob_input_row.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../presenter/voter_presenter.dart';
+import 'voter_history_page.dart';
 import 'voter_result_page.dart';
 
 class VoterPage extends StatelessWidget {
@@ -25,6 +26,15 @@ class VoterPage extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.white,
         foregroundColor: AppColors.textDark,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () {
+              Get.to(() => const VoterHistoryPage());
+            },
+            tooltip: 'ইতিহাস',
+          ),
+        ],
       ),
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollInfo) {

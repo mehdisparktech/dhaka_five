@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../../core/constants/app_texts.dart';
 import '../../../../core/utils/digit_converter.dart';
 import '../../../../core/utils/validators.dart';
+import '../../data/voter_history_service.dart';
 import '../../data/voter_remote_source.dart';
 import '../ui_state/voter_ui_state.dart';
 
@@ -22,6 +23,7 @@ class VoterPresenter extends GetxController {
   bool get isSearchByVoterId => searchType.value == AppTexts.voterIdNumber;
 
   int page = 1;
+  final VoterHistoryService _historyService = VoterHistoryService();
 
   Future<void> search({bool loadMore = false}) async {
     // ইউজারের কাঁচা ইনপুট (বাংলা/ইংরেজি মিলিয়ে যা আছে)
@@ -86,12 +88,28 @@ class VoterPresenter extends GetxController {
       // Often search APIs return everything or a specific page.
       // Assuming standard pagination behavior for the sake of the "Load More" feature requested.
 
+      final finalVoters = loadMore
+          ? [...state.voters, ...newVoters]
+          : newVoters;
+
       _state.value = state.copyWith(
-        voters: loadMore ? [...state.voters, ...newVoters] : newVoters,
+        voters: finalVoters,
         hasMore: newVoters.isNotEmpty, // Simple pagination check
         loading: false,
         loadingMore: false,
       );
+
+      // Save to history only when not loading more (i.e., new search)
+      if (!loadMore && finalVoters.isNotEmpty) {
+        await _historyService.saveSearch(
+          searchType: isSearchByVoterId ? 'ভোটার আইডি নম্বর' : 'নাম',
+          searchValue: rawName,
+          dobDay: rawDay,
+          dobMonth: rawMonth,
+          dobYear: rawYear,
+          voters: finalVoters,
+        );
+      }
 
       if (newVoters.isNotEmpty) {
         page++;
