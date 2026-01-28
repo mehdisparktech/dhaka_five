@@ -1,170 +1,18 @@
-import 'dart:typed_data';
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../presenter/voter_detail_presenter.dart';
 
-class VoterDetailPage extends StatefulWidget {
+class VoterDetailPage extends StatelessWidget {
   final Map voter;
 
   const VoterDetailPage({super.key, required this.voter});
 
   @override
-  State<VoterDetailPage> createState() => _VoterDetailPageState();
-}
-
-class _VoterDetailPageState extends State<VoterDetailPage> {
-  final GlobalKey _previewKey = GlobalKey();
-
-  Map get voter => widget.voter;
-
-  String _field(String key, {String fallback = 'তথ্য নেই'}) {
-    final value = voter[key];
-    if (value == null) return fallback;
-    final text = value.toString().trim();
-    if (text.isEmpty) return fallback;
-    return text;
-  }
-
-  String get _name => _field('name', fallback: 'নাম পাওয়া যায়নি');
-  String get _fatherName => _field('fathers_name');
-  String get _motherName => _field('mothers_name');
-  String get _husbandName => _field('husband_name', fallback: 'প্রযোজ্য নয়');
-  String get _voterId =>
-      _field('voter_id', fallback: _field('serial', fallback: '-'));
-  String get _serial => _field('serial', fallback: '-');
-  String get _dob =>
-      _field('dob', fallback: _field('date_of_birth', fallback: '-'));
-  String get _gender => _field('gender', fallback: '-');
-  String get _address => _field('address');
-  String get _area {
-    final area = voter['area'];
-    if (area is Map) {
-      final local = area['local_administrative_area']?.toString().trim();
-      if (local != null && local.isNotEmpty) {
-        return local;
-      }
-    }
-    // যদি কখনও API সরাসরি "area" স্ট্রিং হিসেবে ফেরত দেয় বা কিছুই না থাকে
-    return _field('area', fallback: 'তথ্য নেই');
-  }
-
-  String get _centerName {
-    // নতুন API: vote_center.name, পুরোনো ফ্ল্যাট ফরম্যাট: center_name / center
-    final voteCenter = voter['vote_center'];
-    if (voteCenter is Map) {
-      final raw = voteCenter['name']?.toString().trim();
-      if (raw != null && raw.isNotEmpty) {
-        return raw;
-      }
-    }
-
-    // পুরোনো ফ্ল্যাট কী থেকে ফ্যালব্যাক
-    final flatCenterName = _field('center_name', fallback: '');
-    if (flatCenterName.isNotEmpty) {
-      return flatCenterName;
-    }
-    final flatCenter = _field('center', fallback: '');
-    if (flatCenter.isNotEmpty) {
-      return flatCenter;
-    }
-    return 'তথ্য নেই';
-  }
-
-  String get _centerInfo {
-    // আগে center_info থাকলে সরাসরি সেটাই দেখাই
-    final directInfo = _field('center_info', fallback: '');
-    if (directInfo.isNotEmpty) return directInfo;
-
-    final parts = <String>[];
-
-    final voteCenter = voter['vote_center'];
-    if (voteCenter is Map) {
-      final centerNo = voteCenter['center_no']?.toString().trim();
-      if (centerNo != null && centerNo.isNotEmpty) {
-        parts.add('কেন্দ্র নং: $centerNo');
-      }
-    }
-
-    final area = voter['area'];
-    if (area is Map) {
-      final localArea = area['local_administrative_area']?.toString().trim();
-      if (localArea != null && localArea.isNotEmpty) {
-        parts.add(localArea);
-      }
-
-      final constituency = area['constituency'];
-      if (constituency is Map) {
-        final number = constituency['number']?.toString().trim();
-        final name = constituency['name']?.toString().trim();
-        final cParts = <String>[];
-        if (number != null && number.isNotEmpty) cParts.add(number);
-        if (name != null && name.isNotEmpty) cParts.add(name);
-        if (cParts.isNotEmpty) {
-          parts.add(cParts.join(' - '));
-        }
-      }
-    }
-
-    return parts.join(', ');
-  }
-
-  Future<Uint8List> _buildPdf(PdfPageFormat format) async {
-    final boundary =
-        _previewKey.currentContext?.findRenderObject()
-            as RenderRepaintBoundary?;
-    if (boundary == null) {
-      throw Exception('Preview not ready');
-    }
-
-    final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    final pngBytes = byteData!.buffer.asUint8List();
-
-    final pdf = pw.Document();
-    final pdfImage = pw.MemoryImage(pngBytes);
-
-    pdf.addPage(
-      pw.Page(
-        pageFormat: format,
-        build: (context) =>
-            pw.Center(child: pw.Image(pdfImage, fit: pw.BoxFit.contain)),
-      ),
-    );
-
-    return pdf.save();
-  }
-
-  Future<void> _downloadPdf() async {
-    try {
-      final bytes = await _buildPdf(PdfPageFormat.a4);
-      await Printing.sharePdf(bytes: bytes, filename: 'voter_$_voterId.pdf');
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('PDF তৈরি করতে সমস্যা হয়েছে')),
-      );
-    }
-  }
-
-  Future<void> _printPdf() async {
-    try {
-      await Printing.layoutPdf(onLayout: _buildPdf);
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('প্রিন্ট করতে সমস্যা হয়েছে')),
-      );
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final presenter = Get.put(VoterDetailPresenter(voter: voter));
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -178,7 +26,7 @@ class _VoterDetailPageState extends State<VoterDetailPage> {
         padding: const EdgeInsets.all(16),
         child: Center(
           child: RepaintBoundary(
-            key: _previewKey,
+            key: presenter.previewKey,
             child: Container(
               padding: const EdgeInsets.all(8),
               width: 430,
@@ -233,17 +81,17 @@ class _VoterDetailPageState extends State<VoterDetailPage> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          _centerName,
+                          presenter.centerName,
                           style: const TextStyle(
                             fontSize: 14,
                             color: AppColors.textDark,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        if (_centerInfo.isNotEmpty) ...[
+                        if (presenter.centerInfo.isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Text(
-                            _centerInfo,
+                            presenter.centerInfo,
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
@@ -258,16 +106,19 @@ class _VoterDetailPageState extends State<VoterDetailPage> {
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        _InfoRow(label: 'নাম', value: _name),
-                        _InfoRow(label: 'সিরিয়াল নং', value: _serial),
-                        _InfoRow(label: 'পিতা', value: _fatherName),
-                        _InfoRow(label: 'মাতা', value: _motherName),
-                        _InfoRow(label: 'স্বামী/স্ত্রী', value: _husbandName),
-                        _InfoRow(label: 'ভোটার নং', value: _voterId),
-                        _InfoRow(label: 'জন্ম তারিখ', value: _dob),
-                        _InfoRow(label: 'লিঙ্গ', value: _gender),
-                        _InfoRow(label: 'এলাকাঃ', value: _area),
-                        _InfoRow(label: 'ঠিকানা', value: _address),
+                        _InfoRow(label: 'নাম', value: presenter.name),
+                        _InfoRow(label: 'সিরিয়াল নং', value: presenter.serial),
+                        _InfoRow(label: 'পিতা', value: presenter.fatherName),
+                        _InfoRow(label: 'মাতা', value: presenter.motherName),
+                        _InfoRow(
+                          label: 'স্বামী/স্ত্রী',
+                          value: presenter.husbandName,
+                        ),
+                        _InfoRow(label: 'ভোটার নং', value: presenter.voterId),
+                        _InfoRow(label: 'জন্ম তারিখ', value: presenter.dob),
+                        _InfoRow(label: 'লিঙ্গ', value: presenter.gender),
+                        _InfoRow(label: 'এলাকাঃ', value: presenter.area),
+                        _InfoRow(label: 'ঠিকানা', value: presenter.address),
                       ],
                     ),
                   ),
@@ -308,28 +159,68 @@ class _VoterDetailPageState extends State<VoterDetailPage> {
           child: Row(
             children: [
               Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: _downloadPdf,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Obx(
+                  () => ElevatedButton.icon(
+                    onPressed: presenter.isDownloading.value
+                        ? null
+                        : presenter.downloadPdf,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      disabledBackgroundColor: AppColors.primary.withOpacity(
+                        0.6,
+                      ),
+                    ),
+                    icon: presenter.isDownloading.value
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                        : const Icon(Icons.download_rounded),
+                    label: presenter.isDownloading.value
+                        ? const Text('ডাউনলোড হচ্ছে...')
+                        : const Text('PDF ডাউনলোড'),
                   ),
-                  icon: const Icon(Icons.download_rounded),
-                  label: const Text('PDF ডাউনলোড'),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: _printPdf,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Obx(
+                  () => OutlinedButton.icon(
+                    onPressed: presenter.isPrinting.value
+                        ? null
+                        : presenter.printPdf,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      side: const BorderSide(color: AppColors.primary),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      disabledForegroundColor: AppColors.primary.withOpacity(
+                        0.6,
+                      ),
+                    ),
+                    icon: presenter.isPrinting.value
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColors.primary,
+                              ),
+                            ),
+                          )
+                        : const Icon(Icons.print_rounded),
+                    label: presenter.isPrinting.value
+                        ? const Text('প্রিন্ট হচ্ছে...')
+                        : const Text('প্রিন্ট'),
                   ),
-                  icon: const Icon(Icons.print_rounded),
-                  label: const Text('প্রিন্ট'),
                 ),
               ),
             ],
