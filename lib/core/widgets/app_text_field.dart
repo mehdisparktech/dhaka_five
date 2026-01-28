@@ -7,6 +7,8 @@ class AppTextField extends StatelessWidget {
   final TextEditingController controller;
   final TextInputType? keyboardType;
   final int? maxLength;
+  final FocusNode? focusNode;
+  final ValueChanged<String>? onChanged;
 
   const AppTextField({
     super.key,
@@ -14,14 +16,18 @@ class AppTextField extends StatelessWidget {
     required this.controller,
     this.keyboardType,
     this.maxLength,
+    this.focusNode,
+    this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      focusNode: focusNode,
       keyboardType: keyboardType,
       maxLength: maxLength,
+      onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
