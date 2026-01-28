@@ -79,84 +79,84 @@ class VoterHistoryPage extends StatelessWidget {
         return Column(
           children: [
             // Action buttons
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.background,
-                border: Border(bottom: BorderSide(color: AppColors.border)),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Obx(
-                      () => ElevatedButton.icon(
-                        onPressed:
-                            presenter.isDownloading.value ||
-                                presenter.isPrinting.value
-                            ? null
-                            : presenter.downloadAllHistory,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          disabledBackgroundColor: AppColors.primary
-                              .withOpacity(0.6),
-                        ),
-                        icon: presenter.isDownloading.value
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
-                                  ),
-                                ),
-                              )
-                            : const Icon(Icons.download_rounded),
-                        label: presenter.isDownloading.value
-                            ? const Text('তৈরি হচ্ছে...')
-                            : const Text('সব ডাউনলোড'),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Obx(
-                      () => OutlinedButton.icon(
-                        onPressed:
-                            presenter.isDownloading.value ||
-                                presenter.isPrinting.value
-                            ? null
-                            : presenter.printAllHistory,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.primary,
-                          side: const BorderSide(color: AppColors.primary),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          disabledForegroundColor: AppColors.primary
-                              .withOpacity(0.6),
-                        ),
-                        icon: presenter.isPrinting.value
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppColors.primary,
-                                  ),
-                                ),
-                              )
-                            : const Icon(Icons.print_rounded),
-                        label: presenter.isPrinting.value
-                            ? const Text('প্রিন্ট হচ্ছে...')
-                            : const Text('সব প্রিন্ট'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // Container(
+            //   padding: const EdgeInsets.all(16),
+            //   decoration: BoxDecoration(
+            //     color: AppColors.background,
+            //     border: Border(bottom: BorderSide(color: AppColors.border)),
+            //   ),
+            //   child: Row(
+            //     children: [
+            //       Expanded(
+            //         child: Obx(
+            //           () => ElevatedButton.icon(
+            //             onPressed:
+            //                 presenter.isDownloading.value ||
+            //                     presenter.isPrinting.value
+            //                 ? null
+            //                 : presenter.downloadAllHistory,
+            //             style: ElevatedButton.styleFrom(
+            //               backgroundColor: AppColors.primary,
+            //               foregroundColor: Colors.white,
+            //               padding: const EdgeInsets.symmetric(vertical: 12),
+            //               disabledBackgroundColor: AppColors.primary
+            //                   .withOpacity(0.6),
+            //             ),
+            //             icon: presenter.isDownloading.value
+            //                 ? const SizedBox(
+            //                     width: 20,
+            //                     height: 20,
+            //                     child: CircularProgressIndicator(
+            //                       strokeWidth: 2,
+            //                       valueColor: AlwaysStoppedAnimation<Color>(
+            //                         Colors.white,
+            //                       ),
+            //                     ),
+            //                   )
+            //                 : const Icon(Icons.download_rounded),
+            //             label: presenter.isDownloading.value
+            //                 ? const Text('তৈরি হচ্ছে...')
+            //                 : const Text('সব ডাউনলোড'),
+            //           ),
+            //         ),
+            //       ),
+            //       const SizedBox(width: 12),
+            //       Expanded(
+            //         child: Obx(
+            //           () => OutlinedButton.icon(
+            //             onPressed:
+            //                 presenter.isDownloading.value ||
+            //                     presenter.isPrinting.value
+            //                 ? null
+            //                 : presenter.printAllHistory,
+            //             style: OutlinedButton.styleFrom(
+            //               foregroundColor: AppColors.primary,
+            //               side: const BorderSide(color: AppColors.primary),
+            //               padding: const EdgeInsets.symmetric(vertical: 12),
+            //               disabledForegroundColor: AppColors.primary
+            //                   .withOpacity(0.6),
+            //             ),
+            //             icon: presenter.isPrinting.value
+            //                 ? const SizedBox(
+            //                     width: 20,
+            //                     height: 20,
+            //                     child: CircularProgressIndicator(
+            //                       strokeWidth: 2,
+            //                       valueColor: AlwaysStoppedAnimation<Color>(
+            //                         AppColors.primary,
+            //                       ),
+            //                     ),
+            //                   )
+            //                 : const Icon(Icons.print_rounded),
+            //             label: presenter.isPrinting.value
+            //                 ? const Text('প্রিন্ট হচ্ছে...')
+            //                 : const Text('সব প্রিন্ট'),
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
 
             // History list
             Expanded(
