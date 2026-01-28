@@ -89,9 +89,9 @@ class VoterPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Obx(() {
+                            final currentType = presenter.searchType.value;
                             final isVoterId =
-                                presenter.searchType.value ==
-                                AppTexts.voterIdNumber;
+                                currentType == AppTexts.voterIdNumber;
 
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,6 +106,8 @@ class VoterPage extends StatelessWidget {
                                   items: const [
                                     AppTexts.name,
                                     AppTexts.voterIdNumber,
+                                    AppTexts.fathersName,
+                                    AppTexts.mothersName,
                                   ],
                                   onChanged: (value) {
                                     if (value == null) return;
@@ -115,18 +117,36 @@ class VoterPage extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  isVoterId
-                                      ? 'ভোটার আইডি নম্বর'
-                                      : 'নাম (বাংলায় লিখুন)',
+                                  () {
+                                    if (isVoterId) {
+                                      return 'ভোটার আইডি নম্বর';
+                                    } else if (currentType ==
+                                        AppTexts.fathersName) {
+                                      return 'পিতার নাম (বাংলায় লিখুন)';
+                                    } else if (currentType ==
+                                        AppTexts.mothersName) {
+                                      return 'মাতার নাম (বাংলায় লিখুন)';
+                                    }
+                                    return 'নাম (বাংলায় লিখুন)';
+                                  }(),
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
                                 AppTextField(
-                                  hint: isVoterId
-                                      ? 'ভোটার আইডি নম্বর লিখুন'
-                                      : 'নাম লিখুন...',
+                                  hint: () {
+                                    if (isVoterId) {
+                                      return 'ভোটার আইডি নম্বর লিখুন';
+                                    } else if (currentType ==
+                                        AppTexts.fathersName) {
+                                      return 'পিতার নাম লিখুন...';
+                                    } else if (currentType ==
+                                        AppTexts.mothersName) {
+                                      return 'মাতার নাম লিখুন...';
+                                    }
+                                    return 'নাম লিখুন...';
+                                  }(),
                                   controller: presenter.nameController,
                                   keyboardType: isVoterId
                                       ? TextInputType.number

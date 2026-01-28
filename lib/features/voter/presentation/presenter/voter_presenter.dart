@@ -21,6 +21,8 @@ class VoterPresenter extends GetxController {
   final RxString searchType = AppTexts.name.obs;
 
   bool get isSearchByVoterId => searchType.value == AppTexts.voterIdNumber;
+  bool get isSearchByFatherName => searchType.value == AppTexts.fathersName;
+  bool get isSearchByMotherName => searchType.value == AppTexts.mothersName;
 
   int page = 1;
   final VoterHistoryService _historyService = VoterHistoryService();
@@ -72,8 +74,20 @@ class VoterPresenter extends GetxController {
 
       // CSRF token is automatically injected by Dio interceptor
       // No need to include _token in payload
+
+      String apiSearchType;
+      if (isSearchByVoterId) {
+        apiSearchType = 'voter_id';
+      } else if (isSearchByFatherName) {
+        apiSearchType = 'fathers_name';
+      } else if (isSearchByMotherName) {
+        apiSearchType = 'mothers_name';
+      } else {
+        apiSearchType = 'name';
+      }
+
       final payload = {
-        'search_type': isSearchByVoterId ? 'voter_id' : 'name',
+        'search_type': apiSearchType,
         'search_value': searchValueBn,
         'dob_day': dobDayBn,
         'dob_month': dobMonthBn,
@@ -101,8 +115,19 @@ class VoterPresenter extends GetxController {
 
       // Save to history only when not loading more (i.e., new search)
       if (!loadMore && finalVoters.isNotEmpty) {
+        String historySearchType;
+        if (isSearchByVoterId) {
+          historySearchType = AppTexts.voterIdNumber;
+        } else if (isSearchByFatherName) {
+          historySearchType = AppTexts.fathersName;
+        } else if (isSearchByMotherName) {
+          historySearchType = AppTexts.mothersName;
+        } else {
+          historySearchType = AppTexts.name;
+        }
+
         await _historyService.saveSearch(
-          searchType: isSearchByVoterId ? 'ভোটার আইডি নম্বর' : 'নাম',
+          searchType: historySearchType,
           searchValue: rawName,
           dobDay: rawDay,
           dobMonth: rawMonth,

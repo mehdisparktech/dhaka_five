@@ -110,10 +110,10 @@ class VoterDetailPage extends StatelessWidget {
                         _InfoRow(label: 'সিরিয়াল নং', value: presenter.serial),
                         _InfoRow(label: 'পিতা', value: presenter.fatherName),
                         _InfoRow(label: 'মাতা', value: presenter.motherName),
-                        _InfoRow(
-                          label: 'স্বামী/স্ত্রী',
-                          value: presenter.husbandName,
-                        ),
+                        // _InfoRow(
+                        //   label: 'স্বামী/স্ত্রী',
+                        //   value: presenter.husbandName,
+                        // ),
                         _InfoRow(label: 'ভোটার নং', value: presenter.voterId),
                         _InfoRow(label: 'জন্ম তারিখ', value: presenter.dob),
                         _InfoRow(label: 'লিঙ্গ', value: presenter.gender),
