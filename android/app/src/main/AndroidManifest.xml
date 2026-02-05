@@ -16,6 +16,13 @@
     
     <!-- Camera permission - Required for NID card OCR -->
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Bluetooth permissions for Thermal Printer -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     
     <application
         android:label="দাঁড়িপাল্লা"

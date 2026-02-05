@@ -103,31 +103,6 @@ class VoterDetailPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // Container(
-                  //   padding: const EdgeInsets.symmetric(
-                  //     horizontal: 16,
-                  //     vertical: 12,
-                  //   ),
-                  //   decoration: const BoxDecoration(
-                  //     color: AppColors.background,
-                  //     borderRadius: BorderRadius.only(
-                  //       bottomLeft: Radius.circular(16),
-                  //       bottomRight: Radius.circular(16),
-                  //     ),
-                  //   ),
-                  //   child: Text(
-                  //     '''মোহাম্মদ কামাল হোসেন এর সালাম নিন, দাঁড়িপাল্লা মার্কায় ভোট দিন।তারুন্যের প্রথম ভোট, দাঁড়িপাল্লা মার্কার পক্ষে হোক।''',
-                  //     style: TextStyle(
-                  //       fontSize: 14,
-                  //       fontWeight: FontWeight.w600,
-                  //       color: AppColors.primary,
-                  //     ),
-                  //     maxLines: 3,
-                  //     overflow: TextOverflow.ellipsis,
-                  //     textAlign: TextAlign.center,
-                  //     softWrap: true,
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -141,17 +116,14 @@ class VoterDetailPage extends StatelessWidget {
             children: [
               Expanded(
                 child: Obx(
-                  () => ElevatedButton.icon(
+                  () => OutlinedButton.icon(
                     onPressed: presenter.isDownloading.value
                         ? null
                         : presenter.downloadPdf,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      side: const BorderSide(color: AppColors.primary),
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      disabledBackgroundColor: AppColors.primary.withOpacity(
-                        0.6,
-                      ),
                     ),
                     icon: presenter.isDownloading.value
                         ? const SizedBox(
@@ -160,14 +132,14 @@ class VoterDetailPage extends StatelessWidget {
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
+                                AppColors.primary,
                               ),
                             ),
                           )
                         : const Icon(Icons.download_rounded),
                     label: presenter.isDownloading.value
-                        ? const Text('ডাউনলোড হচ্ছে...')
-                        : const Text('PDF ডাউনলোড'),
+                        ? const Text('ডাউনলোড...')
+                        : const Text('ডাউনলোড'),
                   ),
                 ),
               ),
@@ -182,9 +154,6 @@ class VoterDetailPage extends StatelessWidget {
                       foregroundColor: AppColors.primary,
                       side: const BorderSide(color: AppColors.primary),
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      disabledForegroundColor: AppColors.primary.withOpacity(
-                        0.6,
-                      ),
                     ),
                     icon: presenter.isPrinting.value
                         ? const SizedBox(
@@ -192,15 +161,37 @@ class VoterDetailPage extends StatelessWidget {
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColors.primary,
-                              ),
+                              color: AppColors.primary,
                             ),
                           )
                         : const Icon(Icons.print_rounded),
-                    label: presenter.isPrinting.value
-                        ? const Text('প্রিন্ট হচ্ছে...')
-                        : const Text('প্রিন্ট'),
+                    label: const Text('প্রিন্ট'),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Obx(
+                  () => OutlinedButton.icon(
+                    onPressed: presenter.isThermalPrinting.value
+                        ? null
+                        : presenter.printThermalSlip,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      side: const BorderSide(color: AppColors.primary),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    icon: presenter.isThermalPrinting.value
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.primary,
+                            ),
+                          )
+                        : const Icon(Icons.receipt_long),
+                    label: const Text('স্লিপ'),
                   ),
                 ),
               ),

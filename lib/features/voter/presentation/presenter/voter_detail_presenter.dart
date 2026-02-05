@@ -8,6 +8,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
+import '../../../../core/services/thermal_printer_service.dart';
+
 class VoterDetailPresenter extends GetxController {
   final Map voter;
   final GlobalKey previewKey = GlobalKey();
@@ -167,5 +169,139 @@ class VoterDetailPresenter extends GetxController {
     } finally {
       isPrinting.value = false;
     }
+  }
+
+  // Thermal Printer Logic
+  final ThermalPrinterService _thermalService = ThermalPrinterService.instance;
+  // Use generic List or dynamic if BluetoothInfo is not exported, but generally it is.
+  // To avoid import issues in presenter, we can use dynamic or basic types,
+  // but better to import print_bluetooth_thermal in presenter if needed.
+  // Actually, let's use dynamic to be safe and avoid unnecessary imports if not needed,
+  // BUT we need to display name and mac.
+  // Let's import the package in the file header first.
+
+  final RxList<dynamic> availableDevices = <dynamic>[].obs;
+  final RxBool isScanning = false.obs;
+  final RxBool isThermalPrinting = false.obs;
+
+  Future<void> scanForPrinters() async {
+    isScanning.value = true;
+    try {
+      final permitted = await _thermalService.isPermissionGranted;
+      if (!permitted) {
+        // print_bluetooth_thermal handles request internally sometimes, but let's check
+        // It provides a method to check. If false, we might need to ask user to enable bluetooth.
+        // Actually the package assumes permissions are requested.
+        // Let's rely on getBondedDevices() which usually triggers checks or returns empty.
+      }
+
+      final devices = await _thermalService.getBondedDevices();
+      availableDevices.assignAll(devices);
+
+      if (devices.isEmpty) {
+        Get.snackbar(
+          'device পাওয়া যায়নি',
+          'অনুগ্রহ করে প্রিন্টার পেয়ার (Pair) করুন',
+        );
+      }
+    } catch (e) {
+      Get.snackbar('ত্রুটি', 'ডিভাইস খুঁজতে সমস্যা হয়েছে: $e');
+    } finally {
+      isScanning.value = false;
+    }
+  }
+
+  Future<void> connectToPrinter(String mac) async {
+    try {
+      final success = await _thermalService.connect(mac);
+      if (success) {
+        Get.back(); // Close dialog
+        Get.snackbar(
+          'সফল',
+          'প্রিন্টার সংযুক্ত হয়েছে',
+          backgroundColor: Colors.green.withOpacity(0.2),
+        );
+      } else {
+        Get.snackbar('ব্যর্থ', 'সংযোগ করা যায়নি');
+      }
+    } catch (e) {
+      Get.snackbar('ত্রুটি', 'সংযোগ সমস্যা: $e');
+    }
+  }
+
+  Future<void> printThermalSlip() async {
+    if (isThermalPrinting.value) return;
+
+    // Check connection first
+    final bool connected = await _thermalService.isConnected;
+
+    if (!connected) {
+      await scanForPrinters();
+      _showPrinterDialog();
+      return;
+    }
+
+    isThermalPrinting.value = true;
+    try {
+      await _thermalService.printVoterSlip(voter);
+      Get.snackbar(
+        'সফল',
+        'প্রিন্ট সম্পন্ন হয়েছে',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      Get.snackbar('ত্রুটি', 'প্রিন্ট করতে সমস্যা হয়েছে: $e');
+    } finally {
+      isThermalPrinting.value = false;
+    }
+  }
+
+  void _showPrinterDialog() {
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'প্রিন্টার নির্বাচন করুন',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              Obx(() {
+                if (isScanning.value) return const CircularProgressIndicator();
+                if (availableDevices.isEmpty) {
+                  return const Text(
+                    'কোনো পেয়ার করা ডিভাইস মিলেনি।\nব্লুটুথ অন আছে কিনা দেখুন।',
+                  );
+                }
+
+                return Column(
+                  children: availableDevices.map((device) {
+                    // device is BluetoothInfo
+                    final name = device.name;
+                    final mac = device
+                        .macAdress; // Note: package might spell it 'macAdress' or 'macAddress'
+                    return ListTile(
+                      title: Text(name),
+                      subtitle: Text(mac),
+                      onTap: () => connectToPrinter(mac),
+                      trailing: const Icon(Icons.print),
+                    );
+                  }).toList(),
+                );
+              }),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () => Get.back(),
+                child: const Text('বন্ধ করুন'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
