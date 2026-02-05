@@ -39,25 +39,6 @@ class VoterDetailPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Top banner (candidate + slogan) – using existing cover image
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
-                    ),
-                    child: Stack(
-                      children: [
-                        SizedBox(
-                          height: 230,
-                          width: double.infinity,
-                          child: Image.asset(
-                            'assets/images/cover.png',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -122,31 +103,31 @@ class VoterDetailPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    decoration: const BoxDecoration(
-                      color: AppColors.background,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
-                      ),
-                    ),
-                    child: Text(
-                      '''মোহাম্মদ কামাল হোসেন এর সালাম নিন, দাঁড়িপাল্লা মার্কায় ভোট দিন।তারুন্যের প্রথম ভোট, দাঁড়িপাল্লা মার্কার পক্ষে হোক।''',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
-                      ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      softWrap: true,
-                    ),
-                  ),
+                  // Container(
+                  //   padding: const EdgeInsets.symmetric(
+                  //     horizontal: 16,
+                  //     vertical: 12,
+                  //   ),
+                  //   decoration: const BoxDecoration(
+                  //     color: AppColors.background,
+                  //     borderRadius: BorderRadius.only(
+                  //       bottomLeft: Radius.circular(16),
+                  //       bottomRight: Radius.circular(16),
+                  //     ),
+                  //   ),
+                  //   child: Text(
+                  //     '''মোহাম্মদ কামাল হোসেন এর সালাম নিন, দাঁড়িপাল্লা মার্কায় ভোট দিন।তারুন্যের প্রথম ভোট, দাঁড়িপাল্লা মার্কার পক্ষে হোক।''',
+                  //     style: TextStyle(
+                  //       fontSize: 14,
+                  //       fontWeight: FontWeight.w600,
+                  //       color: AppColors.primary,
+                  //     ),
+                  //     maxLines: 3,
+                  //     overflow: TextOverflow.ellipsis,
+                  //     textAlign: TextAlign.center,
+                  //     softWrap: true,
+                  //   ),
+                  // ),
                 ],
               ),
             ),
