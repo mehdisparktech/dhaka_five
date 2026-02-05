@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,7 +31,7 @@ class VoterPresenter extends GetxController {
   int page = 1;
   final VoterHistoryService _historyService = VoterHistoryService();
   final NidOcrService _ocrService = NidOcrService();
-  
+
   final RxBool isProcessingOcr = false.obs;
   final Rxn<File> selectedImage = Rxn<File>();
 
@@ -159,10 +160,10 @@ class VoterPresenter extends GetxController {
   Future<void> pickImageAndExtractData() async {
     try {
       isProcessingOcr.value = true;
-      
+
       // Pick image from camera
       final XFile? imageFile = await _ocrService.pickImageFromCamera();
-      
+
       if (imageFile == null) {
         Get.snackbar(
           'সতর্কতা',
@@ -184,8 +185,10 @@ class VoterPresenter extends GetxController {
       );
 
       // Extract text from image
-      final extractedText = await _ocrService.extractTextFromImage(imageFile.path);
-      
+      final extractedText = await _ocrService.extractTextFromImage(
+        imageFile.path,
+      );
+
       if (extractedText.isEmpty) {
         Get.snackbar(
           'ত্রুটি',
@@ -222,8 +225,8 @@ class VoterPresenter extends GetxController {
       final day = parsedData['day'] ?? '';
       final month = parsedData['month'] ?? '';
       final year = parsedData['year'] ?? '';
-      
-      if (name.isNotEmpty || 
+
+      if (name.isNotEmpty ||
           (day.isNotEmpty && month.isNotEmpty && year.isNotEmpty)) {
         Get.snackbar(
           'সফল',
