@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -27,6 +29,7 @@ class VoterPresenter extends GetxController {
   bool get isSearchByVoterId => searchType.value == AppTexts.voterIdNumber;
   bool get isSearchByFatherName => searchType.value == AppTexts.fathersName;
   bool get isSearchByMotherName => searchType.value == AppTexts.mothersName;
+  bool get isSearchByAddress => searchType.value == AppTexts.address;
 
   int page = 1;
   final VoterHistoryService _historyService = VoterHistoryService();
@@ -34,6 +37,56 @@ class VoterPresenter extends GetxController {
 
   final RxBool isProcessingOcr = false.obs;
   final Rxn<File> selectedImage = Rxn<File>();
+
+  // Address Search related variables
+  final RxList<Map<String, dynamic>> wards = <Map<String, dynamic>>[].obs;
+  final Rx<String?> selectedWard = Rx<String?>(null);
+
+  // We will store the full area objects for the currently selected ward
+  List<Map<String, dynamic>> _currentWardAreas = [];
+  // availableAreas string list for the UI dropdown
+  final RxList<String> availableAreas = <String>[].obs;
+  final Rx<String?> selectedArea = Rx<String?>(null);
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadLocations();
+  }
+
+  Future<void> loadLocations() async {
+    try {
+      final String response = await rootBundle.loadString(
+        'assets/json/location.json',
+      );
+      final data = await json.decode(response);
+      wards.value = List<Map<String, dynamic>>.from(data['wards']);
+    } catch (e) {
+      print('Error loading locations: $e');
+    }
+  }
+
+  void onWardSelected(String? wardName) {
+    selectedWard.value = wardName;
+    selectedArea.value = null; // Reset area when ward changes
+    availableAreas.clear();
+    _currentWardAreas.clear();
+
+    if (wardName != null) {
+      final wardData = wards.firstWhere(
+        (ward) => ward['local_administrative_area'] == wardName,
+        orElse: () => {},
+      );
+
+      if (wardData.isNotEmpty && wardData['areas'] != null) {
+        // Updated parsing for new JSON structure: areas is List of Maps
+        _currentWardAreas = List<Map<String, dynamic>>.from(wardData['areas']);
+        availableAreas.value = _currentWardAreas
+            .map((area) => area['voting_area_name'] as String)
+            .toList();
+      }
+    }
+  }
 
   Future<void> search({bool loadMore = false}) async {
     // ইউজারের কাঁচা ইনপুট (বাংলা/ইংরেজি মিলিয়ে যা আছে)
@@ -47,8 +100,24 @@ class VoterPresenter extends GetxController {
     final mEn = DigitConverter.bnToEn(rawMonth);
     final yEn = DigitConverter.bnToEn(rawYear);
 
-    if (Validators.isEmpty(rawName) || !Validators.validDate(dEn, mEn, yEn)) {
+    // Address search does not require DOB
+    bool isDateRequired = !isSearchByAddress;
+
+    if (!isSearchByAddress && Validators.isEmpty(rawName)) {
       _state.value = state.copyWith(error: 'সঠিক তথ্য প্রদান করুন');
+      return;
+    }
+
+    if (isSearchByAddress && Validators.isEmpty(rawName)) {
+      // Address search now uses the text field, so it must not be empty
+      _state.value = state.copyWith(error: 'অনুগ্রহ করে ঠিকানা লিখুন');
+      return;
+    }
+
+    // Dropdowns are now optional for Address search, so no validation needed for them.
+
+    if (isDateRequired && !Validators.validDate(dEn, mEn, yEn)) {
+      _state.value = state.copyWith(error: 'সঠিক জন্ম তারিখ প্রদান করুন');
       return;
     }
 
@@ -62,20 +131,12 @@ class VoterPresenter extends GetxController {
     }
 
     try {
-      // NOTE: The API endpoint structure in the request was vague about pagination parameters.
-      // Assuming straightforward payload for now, or maybe the API doesn't support pagination
-      // in the way typical list APIs do.
-      // The user code sample showed `search` taking `page` but the remote source implementation
-      // in the prompt sample code used a payload map.
-      // I will adapt the RemoteSource to take the payload including page if needed,
-      // but for now I will stick to the prompts logic which used a payload map.
-      // Re-reading user prompt: "VoterRemoteSource().search(page)" was used in the Presenter example,
-      // but "VoterRemoteSource().search({...})" was used in the RemoteSource definition.
-      // I will reconcile this by passing the payload.
-
       // API তে ডাটা সবসময় বাংলায় পাঠানোর জন্য
       // (ইউজার ইংরেজি ডিজিট লিখলে সেটাকেও বাংলায় কনভার্ট করছি)
-      final searchValueBn = DigitConverter.enToBn(rawName);
+      final searchValueBn = isSearchByAddress
+          ? rawName // Address is typed manually now
+          : DigitConverter.enToBn(rawName);
+
       final dobDayBn = DigitConverter.enToBn(dEn);
       final dobMonthBn = DigitConverter.enToBn(mEn);
       final dobYearBn = DigitConverter.enToBn(yEn);
@@ -90,6 +151,8 @@ class VoterPresenter extends GetxController {
         apiSearchType = 'fathers_name';
       } else if (isSearchByMotherName) {
         apiSearchType = 'mothers_name';
+      } else if (isSearchByAddress) {
+        apiSearchType = 'address';
       } else {
         apiSearchType = 'name';
       }
@@ -100,8 +163,23 @@ class VoterPresenter extends GetxController {
         'dob_day': dobDayBn,
         'dob_month': dobMonthBn,
         'dob_year': dobYearBn,
-        // 'page': page, // If the API supports it
       };
+
+      if (isSearchByAddress) {
+        if (selectedWard.value != null) {
+          payload['local_administrative_area'] = selectedWard.value!;
+        }
+        if (selectedArea.value != null) {
+          // Find ID from the cached objects
+          final areaObj = _currentWardAreas.firstWhere(
+            (element) => element['voting_area_name'] == selectedArea.value,
+            orElse: () => {},
+          );
+          if (areaObj.isNotEmpty && areaObj['id'] != null) {
+            payload['area_id'] = areaObj['id'];
+          }
+        }
+      }
 
       final res = await VoterRemoteSource().search(payload);
       final newVoters = res['voters'] ?? [];
@@ -130,6 +208,8 @@ class VoterPresenter extends GetxController {
           historySearchType = AppTexts.fathersName;
         } else if (isSearchByMotherName) {
           historySearchType = AppTexts.mothersName;
+        } else if (isSearchByAddress) {
+          historySearchType = AppTexts.address;
         } else {
           historySearchType = AppTexts.name;
         }

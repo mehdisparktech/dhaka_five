@@ -89,47 +89,50 @@ class VoterPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Camera Button for NID Card OCR
-                          Obx(() => Container(
-                                width: double.infinity,
-                                margin: const EdgeInsets.only(bottom: 16),
-                                child: ElevatedButton.icon(
-                                  onPressed: presenter.isProcessingOcr.value
-                                      ? null
-                                      : () => presenter.pickImageAndExtractData(),
-                                  icon: presenter.isProcessingOcr.value
-                                      ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            valueColor: AlwaysStoppedAnimation<Color>(
-                                              Colors.white,
-                                            ),
-                                          ),
-                                        )
-                                      : const Icon(Icons.camera_alt),
-                                  label: Text(
-                                    presenter.isProcessingOcr.value
-                                        ? 'প্রক্রিয়াকরণ...'
-                                        : 'NID কার্ডের ছবি তুলুন',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.textDark,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 14,
-                                      horizontal: 20,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
+                          Obx(
+                            () => Container(
+                              width: double.infinity,
+                              margin: const EdgeInsets.only(bottom: 16),
+                              child: ElevatedButton.icon(
+                                onPressed: presenter.isProcessingOcr.value
+                                    ? null
+                                    : () => presenter.pickImageAndExtractData(),
+                                icon: presenter.isProcessingOcr.value
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                Colors.white,
+                                              ),
+                                        ),
+                                      )
+                                    : const Icon(Icons.camera_alt),
+                                label: Text(
+                                  presenter.isProcessingOcr.value
+                                      ? 'প্রক্রিয়াকরণ...'
+                                      : 'NID কার্ডের ছবি তুলুন',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                              )),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.textDark,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 20,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                           Obx(() {
                             if (presenter.selectedImage.value != null) {
                               return Container(
@@ -203,6 +206,7 @@ class VoterPage extends StatelessWidget {
                                     AppTexts.voterIdNumber,
                                     AppTexts.fathersName,
                                     AppTexts.mothersName,
+                                    AppTexts.address,
                                   ],
                                   onChanged: (value) {
                                     if (value == null) return;
@@ -221,6 +225,9 @@ class VoterPage extends StatelessWidget {
                                     } else if (currentType ==
                                         AppTexts.mothersName) {
                                       return 'মাতার নাম (বাংলায় লিখুন)';
+                                    } else if (currentType ==
+                                        AppTexts.address) {
+                                      return 'ঠিকানা (বাংলায় লিখুন)';
                                     }
                                     return 'নাম (বাংলায় লিখুন)';
                                   }(),
@@ -228,6 +235,7 @@ class VoterPage extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                                // Name/Input Field - Visible for all types
                                 const SizedBox(height: 8),
                                 AppTextField(
                                   hint: () {
@@ -239,6 +247,9 @@ class VoterPage extends StatelessWidget {
                                     } else if (currentType ==
                                         AppTexts.mothersName) {
                                       return 'মাতার নাম লিখুন...';
+                                    } else if (currentType ==
+                                        AppTexts.address) {
+                                      return 'ঠিকানা লিখুন...';
                                     }
                                     return 'নাম লিখুন...';
                                   }(),
@@ -247,21 +258,111 @@ class VoterPage extends StatelessWidget {
                                       ? TextInputType.number
                                       : TextInputType.text,
                                 ),
+
+                                // Optional Dropdowns for Address Search
+                                if (presenter.isSearchByAddress)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 16),
+                                      // Local Administration Dropdown
+                                      const Text(
+                                        'স্থানীয় প্রশাসন (ঐচ্ছিক)',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Obx(
+                                        () => AppDropdown(
+                                          value:
+                                              presenter.selectedWard.value ??
+                                              'স্থানীয় প্রশাসন নির্বাচন করুন',
+                                          items: presenter.wards
+                                              .map(
+                                                (e) =>
+                                                    e['local_administrative_area']
+                                                        as String,
+                                              )
+                                              .toList(),
+                                          onChanged: (value) {
+                                            presenter.onWardSelected(value);
+                                          },
+                                          onClear: () {
+                                            presenter.onWardSelected(null);
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+
+                                      // Area Dropdown
+                                      const Text(
+                                        'এলাকা (ঐচ্ছিক)',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Obx(
+                                        () => AppDropdown(
+                                          value:
+                                              presenter.selectedArea.value ??
+                                              (presenter.selectedWard.value ==
+                                                      null
+                                                  ? 'আগে স্থানীয় প্রশাসন নির্বাচন করুন'
+                                                  : 'এলাকা নির্বাচন করুন'),
+                                          items: presenter.availableAreas,
+                                          onChanged: (value) {
+                                            presenter.selectedArea.value =
+                                                value;
+                                          },
+                                          onClear: () {
+                                            presenter.selectedArea.value = null;
+                                          },
+                                        ),
+                                      ),
+                                      if (presenter.selectedWard.value == null)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 4,
+                                          ),
+                                          child: Text(
+                                            '* আগে স্থানীয় প্রশাসন নির্বাচন করুন',
+                                            style: TextStyle(
+                                              color: AppColors.textDark
+                                                  .withOpacity(0.6),
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
                               ],
                             );
                           }),
 
-                          const SizedBox(height: 16),
-                          const Text(
-                            AppTexts.dob,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          DobInputRow(
-                            day: presenter.dayController,
-                            month: presenter.monthController,
-                            year: presenter.yearController,
-                          ),
+                          Obx(() {
+                            if (presenter.isSearchByAddress) {
+                              return const SizedBox.shrink();
+                            }
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 16),
+                                const Text(
+                                  AppTexts.dob,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 8),
+                                DobInputRow(
+                                  day: presenter.dayController,
+                                  month: presenter.monthController,
+                                  year: presenter.yearController,
+                                ),
+                              ],
+                            );
+                          }),
 
                           const SizedBox(height: 24),
                           Obx(

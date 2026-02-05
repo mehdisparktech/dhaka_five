@@ -6,6 +6,7 @@ class AppTexts {
   static const voterIdNumber = 'ভোটার আইডি নম্বর';
   static const fathersName = 'পিতার নাম';
   static const mothersName = 'মাতার নাম';
+  static const address = 'ঠিকানা';
   static const writeInBangla = 'বাংলায় লিখুন';
   static const dob = 'জন্ম তারিখ';
   static const search = 'খুঁজুন';

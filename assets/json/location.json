@@ -1,0 +1,402 @@
+{
+    "wards": [
+        {
+            "ward_number": "৬২ (পার্ট)",
+            "local_administrative_area": "ওয়াড নং-৬২ (পার্ট)",
+            "areas": [
+                {
+                    "id": "a0b907d0-99fa-4588-aa67-58151d8b3011",
+                    "voting_area_name": "ছনটেক"
+                }
+            ]
+        },
+        {
+            "ward_number": "৪৮",
+            "local_administrative_area": "ঢাকা দক্ষিণ - ওয়ার্ড নং-৪৮",
+            "areas": [
+                {
+                    "id": "a0ad209e-63ae-49be-b4ff-1e14a8a15a4b",
+                    "voting_area_name": "উত্তর যাত্রাবাড়ী-১"
+                },
+                {
+                    "id": "a0afe2c6-f10f-4671-bb13-f093fb9fe574",
+                    "voting_area_name": "উত্তর যাত্রাবাড়ী-২"
+                },
+                {
+                    "id": "a0afe3c7-011e-46ca-bdf6-d92f19e75848",
+                    "voting_area_name": "উত্তর সায়েদাবাদ"
+                },
+                {
+                    "id": "a0afe46a-dab2-42cc-9b7d-98f5b5d32301",
+                    "voting_area_name": "দক্ষিণ সায়েদাবাদ"
+                }
+            ]
+        },
+        {
+            "ward_number": "৪৯",
+            "local_administrative_area": "ঢাকা দক্ষিণ - ওয়ার্ড নং-৪৯",
+            "areas": [
+                {
+                    "id": "a0bb002b-75d6-40cd-88e6-def373ba533b",
+                    "voting_area_name": "ধলপুর"
+                },
+                {
+                    "id": "a0bb028c-b3dd-4874-b6d6-f155a53aee5e",
+                    "voting_area_name": "ব্রাহ্মণ চিরণ"
+                },
+                {
+                    "id": "a0bb0580-ce52-483e-a8cf-2fb276ad2d58",
+                    "voting_area_name": "ব্রাহ্মণ চিরণ আউটফল সিটি পল্লী"
+                },
+                {
+                    "id": "a0bb070f-2864-4415-8016-6ea350ad6b74",
+                    "voting_area_name": "ব্রাহ্মণ চিরণ গোলাপবাগ"
+                }
+            ]
+        },
+        {
+            "ward_number": "৫০",
+            "local_administrative_area": "ঢাকা দক্ষিণ - ওয়ার্ড নং-৫০",
+            "areas": [
+                {
+                    "id": "a0afe519-16a4-48eb-8042-9289a0444f59",
+                    "voting_area_name": "উত্তর যাত্রাবাড়ী"
+                },
+                {
+                    "id": "a0afe63e-f107-4ebc-b952-752c1a4c1cf2",
+                    "voting_area_name": "দক্ষিণ পূর্ব যাত্রাবাড়ী ও ওয়াপদা কলোনী"
+                },
+                {
+                    "id": "a0afe730-4abf-480f-969e-03aa2dfeb54e",
+                    "voting_area_name": "দক্ষিণ যাত্রাবাড়ী"
+                },
+                {
+                    "id": "a0afe830-4012-4bff-bc0b-7d6b69ad692f",
+                    "voting_area_name": "পশ্চিম যাত্রাবাড়ী ও উত্তর পশ্চিম যাত্রাবাড়ী"
+                }
+            ]
+        },
+        {
+            "ward_number": "৬২ (পার্ট)",
+            "local_administrative_area": "ঢাকা দক্ষিণ - ওয়ার্ড নং-৬২ (পার্ট)",
+            "areas": [
+                {
+                    "id": "a0b1743f-5a9d-4b25-87e4-3e58c154310e",
+                    "voting_area_name": "উত্তর কুতুবখালী"
+                },
+                {
+                    "id": "a0b176a3-10fd-4cfb-a0da-ba92801bddeb",
+                    "voting_area_name": "দক্ষিণ কাজলা"
+                },
+                {
+                    "id": "a0b17880-08ee-4270-a20a-227d10034fe1",
+                    "voting_area_name": "দক্ষিণ কাজলা (নয়ানগর)"
+                },
+                {
+                    "id": "a0b90cec-e4b6-4b30-acfd-3e0d8c52efd5",
+                    "voting_area_name": "শেখদী"
+                },
+                {
+                    "id": "a0b90f61-7a25-4e6d-9889-5959f0e8cd5d",
+                    "voting_area_name": "গোবিন্দপুর"
+                },
+                {
+                    "id": "a0b91319-01cc-4c8c-a1f9-cb4ef00ae687",
+                    "voting_area_name": "উত্তর রায়েরবাগ (দনিয়া অংশ)"
+                }
+            ]
+        },
+        {
+            "ward_number": "৬৩",
+            "local_administrative_area": "ঢাকা দক্ষিণ - ওয়ার্ড নং-৬৩",
+            "areas": [
+                {
+                    "id": "a0b17abd-d8ae-46ad-a42a-0c7ec9c61978",
+                    "voting_area_name": "কাজলার পাড়"
+                },
+                {
+                    "id": "a0b8e494-ad5b-4346-b433-8fbcc2c873fc",
+                    "voting_area_name": "মাতুয়াইল শরীফ পাড়া"
+                },
+                {
+                    "id": "a0b8e542-9700-4920-8297-75b90be7cc13",
+                    "voting_area_name": "মাতুয়াইল উত্তর পাড়া"
+                },
+                {
+                    "id": "a0b8e60c-df64-4c72-811b-95bf96156286",
+                    "voting_area_name": "মাতুয়াইল মাঝ পাড়া"
+                },
+                {
+                    "id": "a0b8e69a-8b4c-4206-bef6-8083a890075a",
+                    "voting_area_name": "মাতুয়াইল পশ্চিম পাড়া"
+                },
+                {
+                    "id": "a0b91f73-56d6-4f4a-b519-6e25a8ad1c3a",
+                    "voting_area_name": "ভাঙ্গা প্রেস"
+                },
+                {
+                    "id": "a0b920b5-4e05-47e4-a04b-7bd8809c1aef",
+                    "voting_area_name": "কাজিরগাঁও"
+                }
+            ]
+        },
+        {
+            "ward_number": "৬৪ (পার্ট)",
+            "local_administrative_area": "ঢাকা দক্ষিণ - ওয়ার্ড নং-৬৪ (পার্ট)",
+            "areas": [
+                {
+                    "id": "a0b17c53-7ecb-431e-8436-2099d7e10641",
+                    "voting_area_name": "কোনাপাড়া"
+                },
+                {
+                    "id": "a0b82e98-45d3-400f-98d9-0e1b8bca0de0",
+                    "voting_area_name": "পাড়া ডগাইর নতুন পাড়া"
+                },
+                {
+                    "id": "a0b82fb1-db17-46be-aff5-24d278bc8463",
+                    "voting_area_name": "মল্লিকপাড়া"
+                },
+                {
+                    "id": "a0b83042-13c2-4dd2-9bee-82843d823c2b",
+                    "voting_area_name": "সিটি মিলস"
+                },
+                {
+                    "id": "a0b830a7-1bdb-40a2-936e-91e41bc98d2e",
+                    "voting_area_name": "ধার্মিক পাড়া"
+                },
+                {
+                    "id": "a0b83147-3aa4-494f-8e3a-377a45df1627",
+                    "voting_area_name": "আইআরটিউবস ফ্যাক্টরি"
+                },
+                {
+                    "id": "a0b831b5-6004-4178-99e9-deb623e4cb66",
+                    "voting_area_name": "পুরাতন পাড়াডগাইর"
+                }
+            ]
+        },
+        {
+            "ward_number": "৬৫ (পার্ট)",
+            "local_administrative_area": "ঢাকা দক্ষিণ - ওয়ার্ড নং-৬৫ (পার্ট)",
+            "areas": [
+                {
+                    "id": "a0b17d9a-7788-4177-8ea0-9fe63c60d6c9",
+                    "voting_area_name": "মোমেনবাগ"
+                },
+                {
+                    "id": "a0b770b3-9709-4336-9f62-7bd4775559b6",
+                    "voting_area_name": "গিরিধারা ও বিশ্ব রোডের দক্ষিণ অংশ"
+                },
+                {
+                    "id": "a0b77170-4cc0-49b4-978b-ca79d1f5f056",
+                    "voting_area_name": "তুষারধারা"
+                },
+                {
+                    "id": "a0b77236-b9bc-4441-89dc-91a8d44a204d",
+                    "voting_area_name": "মাতুয়াইল মেডিকেল ও সাদ্দাম মার্কেট"
+                },
+                {
+                    "id": "a0b772bd-ceab-40a8-824c-d59228e7b6b1",
+                    "voting_area_name": "রায়েরবাগ খানকা"
+                },
+                {
+                    "id": "a0b7735b-23dd-41fa-930e-3a3e35fd1ec7",
+                    "voting_area_name": "হাসেম রোড"
+                },
+                {
+                    "id": "a0b7739c-2c73-49d1-a63c-0e3f58ccc961",
+                    "voting_area_name": "রায়েরবাগ"
+                },
+                {
+                    "id": "a0b8134b-dc2f-4d51-b360-337df4d871f2",
+                    "voting_area_name": "খানবাড়ী"
+                },
+                {
+                    "id": "a0b814de-a522-42fb-83ea-7922499d297d",
+                    "voting_area_name": "ভূইয়াবাড়ী"
+                },
+                {
+                    "id": "a0b8160d-2b76-46b3-a246-88f682a83a32",
+                    "voting_area_name": "দক্ষিণপাড়া"
+                },
+                {
+                    "id": "a0b8191d-fe49-44c3-8879-0b50236cca7b",
+                    "voting_area_name": "কেরানীপাড়া"
+                },
+                {
+                    "id": "a0b819f6-b69c-44dd-8cb8-4518ce46aee3",
+                    "voting_area_name": "খুড়িয়াপাড়া"
+                },
+                {
+                    "id": "a0b81aa4-7deb-409e-9ec4-a0deed7c7d3c",
+                    "voting_area_name": "মোগলনগর"
+                },
+                {
+                    "id": "a0b82801-40dc-4110-a94c-9095afb48261",
+                    "voting_area_name": "মুসলিমনগর"
+                },
+                {
+                    "id": "a0b82a8b-171c-4b6f-b7d6-a916b4aaeb4d",
+                    "voting_area_name": "মধুবাগ"
+                },
+                {
+                    "id": "a0b82bc4-b99e-4801-b439-c00eb17a3bc3",
+                    "voting_area_name": "রহমতপুর"
+                },
+                {
+                    "id": "a0b82c67-875b-4100-afc4-435207d4dc5f",
+                    "voting_area_name": "আদর্শবাগ"
+                }
+            ]
+        },
+        {
+            "ward_number": "৬৬",
+            "local_administrative_area": "ঢাকা দক্ষিণ - ওয়ার্ড নং-৬৬",
+            "areas": [
+                {
+                    "id": "a0b17eec-8690-4029-b5f6-840c616188b6",
+                    "voting_area_name": "ডগাইর (পূর্ব) পুরাতন-১"
+                },
+                {
+                    "id": "a0b76ec8-6f22-4418-83e6-92ae0f6fc95b",
+                    "voting_area_name": "ডগাইর পশ্চিম পাড়া"
+                },
+                {
+                    "id": "a0b76f1b-07c8-4d63-888d-3fa066b4e6e2",
+                    "voting_area_name": "ডগাইর (পূর্ব) পুরাতন-২"
+                },
+                {
+                    "id": "a0b76f57-a633-4c2c-81f4-9147656d08f2",
+                    "voting_area_name": "বামৈল"
+                }
+            ]
+        },
+        {
+            "ward_number": "৬৭",
+            "local_administrative_area": "ঢাকা দক্ষিণ - ওয়ার্ড নং-৬৭",
+            "areas": [
+                {
+                    "id": "a0b76c6b-ec54-4fe8-9081-a272afeb7e2e",
+                    "voting_area_name": "সারুলিয়া টেংরা (দক্ষিণ পশ্চিম ও বাহির)"
+                },
+                {
+                    "id": "a0b76d16-1f92-4c80-80af-ae6de4ce0a17",
+                    "voting_area_name": "সান্দিরা জোকা মৌজা অংশ (পূর্ব পশ্চিম বক্সনগর ও করিম কলোনী)"
+                },
+                {
+                    "id": "a0b76d60-a101-4439-b39a-a245e11f163a",
+                    "voting_area_name": "সান্দিরা জোকা তিতাস কলোনী"
+                },
+                {
+                    "id": "a0b76dc9-6285-4919-9ccb-72e8f250868a",
+                    "voting_area_name": "শুকুরসী জোকা"
+                }
+            ]
+        },
+        {
+            "ward_number": "৬৮",
+            "local_administrative_area": "ঢাকা দক্ষিণ - ওয়ার্ড নং-৬৮",
+            "areas": [
+                {
+                    "id": "a0b768a8-0c82-4bff-a646-d04531231e5d",
+                    "voting_area_name": "সারুলিয়া টেংরা (দক্ষিণ পশ্চিম ও বাহির টেংরা রসুল নগর)"
+                },
+                {
+                    "id": "a0b76963-ab71-480b-a6c2-42279cdf0bae",
+                    "voting_area_name": "গোপ দক্ষিণ হাজী নগর"
+                },
+                {
+                    "id": "a0b76a8d-b38e-4819-ac01-064e4010ca66",
+                    "voting_area_name": "সারুলিয়া টেংরা করিম জুট মিলস এলাকা-২"
+                },
+                {
+                    "id": "a0b76b15-20be-4495-b9b1-091b05023dac",
+                    "voting_area_name": "সারুলিয়া টেংরা করিম জুট মিলস এলাকা-১"
+                }
+            ]
+        },
+        {
+            "ward_number": "৬৯",
+            "local_administrative_area": "ঢাকা দক্ষিণ - ওয়ার্ড নং-৬৯",
+            "areas": [
+                {
+                    "id": "a0b75b10-7887-44bc-81a3-639b29484b6b",
+                    "voting_area_name": "রাজাখালী"
+                },
+                {
+                    "id": "a0b75bbf-4181-4143-92df-c564526160fc",
+                    "voting_area_name": "মিরপাড়া"
+                },
+                {
+                    "id": "a0b75c83-4186-41ae-b9f3-f0711c4a1e55",
+                    "voting_area_name": "নড়াইবাগ"
+                },
+                {
+                    "id": "a0b76321-7fbd-4f2e-ad74-465e4dfd8b7b",
+                    "voting_area_name": "লতিফ বাওয়ানী জুট মিলস এলাকা"
+                },
+                {
+                    "id": "a0b764c8-9ab0-4e86-bc35-ae26538eaaec",
+                    "voting_area_name": "আহম্মদ বাওয়ানী টেক্সটাইল মিল এলাকা (স্টাফ কোয়াটার)"
+                },
+                {
+                    "id": "a0b76551-d2ff-4106-a0ad-394f8207222a",
+                    "voting_area_name": "ডেমরা"
+                },
+                {
+                    "id": "a0b76689-28c8-4276-828c-6590c293398d",
+                    "voting_area_name": "কামারগোপ দক্ষিণ"
+                },
+                {
+                    "id": "a0b76738-7999-4f8c-8fc0-b548f7889235",
+                    "voting_area_name": "কামারগোপ খলাপাড়া"
+                }
+            ]
+        },
+        {
+            "ward_number": "৭০",
+            "local_administrative_area": "ঢাকা দক্ষিণ - ওয়ার্ড নং-৭০",
+            "areas": [
+                {
+                    "id": "a0b39e2c-8500-4fb9-a3e9-e005f7bd6583",
+                    "voting_area_name": "দেইল্যা"
+                },
+                {
+                    "id": "a0b4fd48-bc6b-4ac7-be07-45da94fb83aa",
+                    "voting_area_name": "পাইটি"
+                },
+                {
+                    "id": "a0b4fddc-0d9d-4d75-a151-2766675e014c",
+                    "voting_area_name": "কায়েতপাড়া"
+                },
+                {
+                    "id": "a0b4fe80-af67-47ac-8e00-51188247ef76",
+                    "voting_area_name": "ঠুলঠুলিয়া"
+                },
+                {
+                    "id": "a0b4ff26-d45b-4663-b429-4d0f1991ec97",
+                    "voting_area_name": "খলাপাড়া"
+                },
+                {
+                    "id": "a0b4ffa5-e0f2-49ad-807a-a63a5fb6181c",
+                    "voting_area_name": "তাম্বুরাবাদ"
+                },
+                {
+                    "id": "a0b50021-a6bf-46b2-9f6f-3b8f9b0e0c12",
+                    "voting_area_name": "বনপাড়া"
+                },
+                {
+                    "id": "a0b500c5-0d7c-49f3-9dc7-c5f7b1f4a2d9",
+                    "voting_area_name": "মধ্যপাড়া"
+                },
+                {
+                    "id": "a0b5016a-2cfa-4d6f-936d-1b2d8f7e6a3f",
+                    "voting_area_name": "উত্তরপাড়া"
+                },
+                {
+                    "id": "a0b5020b-99f0-41c3-8a1c-4c6d1f0e8e7a",
+                    "voting_area_name": "দক্ষিণপাড়া"
+                }
+            ]
+        }
+    ]
+}
