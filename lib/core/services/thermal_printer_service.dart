@@ -42,10 +42,38 @@ class ThermalPrinterService {
       return v.toString().trim().isEmpty ? def : v.toString().trim();
     }
 
+    // Logic for Area
+    String getArea() {
+      final areaData = voter['area'];
+      if (areaData is Map) {
+        final local = areaData['local_administrative_area']?.toString().trim();
+        if (local != null && local.isNotEmpty) {
+          return local;
+        }
+      }
+      return val('area', def: 'তথ্য নেই');
+    }
+
+    // Logic for Center
+    String getCenter() {
+      final voteCenter = voter['vote_center'];
+      if (voteCenter is Map) {
+        final raw = voteCenter['name']?.toString().trim();
+        if (raw != null && raw.isNotEmpty) {
+          return raw;
+        }
+      }
+      final flatCenterName = val('center_name', def: '');
+      if (flatCenterName.isNotEmpty) return flatCenterName;
+      final flatCenter = val('center', def: '');
+      if (flatCenter.isNotEmpty) return flatCenter;
+      return 'তথ্য নেই';
+    }
+
     // 1. Header
     bytes += generator.reset();
     bytes += generator.text(
-      'VOTER SLIP',
+      'ভোটার স্লিপ', // Voter Slip
       styles: const PosStyles(
         align: PosAlign.center,
         bold: true,
@@ -54,7 +82,7 @@ class ThermalPrinterService {
       ),
     );
     bytes += generator.text(
-      'Dhaka Five App',
+      'ঢাকা ৫ আসন', // Dhaka 5 Asan
       styles: const PosStyles(align: PosAlign.center, bold: true),
     );
     bytes += generator.feed(1);
@@ -64,7 +92,7 @@ class ThermalPrinterService {
     final dateStr =
         "${now.day}/${now.month}/${now.year} ${now.hour}:${now.minute}";
     bytes += generator.text(
-      'Date: $dateStr',
+      'তারিখ: ${_toBanglaNumber(dateStr)}', // Date
       styles: const PosStyles(
         align: PosAlign.center,
         fontType: PosFontType.fontB,
@@ -91,37 +119,49 @@ class ThermalPrinterService {
       ]);
     }
 
-    addRow('Name:', val('name'));
-    addRow('Father:', val('fathers_name'));
-    addRow('Mother:', val('mothers_name'));
-    addRow('Serial:', val('serial'));
-    addRow('Voter No:', val('voter_id', def: val('serial')));
-    addRow('Phone:', val('phone'));
+    // Field Order: Serial, Name, Father, Mother, Gender, Area, DOB, Voter No
+
+    addRow('সিরিয়াল:', val('serial', def: '-'));
+    addRow('নাম:', val('name', def: 'নাম পাওয়া যায়নি'));
+    addRow('পিতা:', val('fathers_name'));
+    addRow('মা:', val('mothers_name'));
+    addRow('লিঙ্গ:', val('gender', def: '-'));
+    addRow('এলাকা:', getArea());
+    addRow('জন্ম তারিখ:', val('dob', def: val('date_of_birth', def: '-')));
+
+    String vNo = val('voter_id');
+    if (vNo == '-') {
+      vNo = val('serial', def: '-');
+    }
+    addRow('ভোটার নং:', vNo);
 
     bytes += generator.hr();
 
     // Center Logic
-    String center = val('center_name');
-    if (center == '-') {
-      if (voter['vote_center'] is Map) {
-        center = voter['vote_center']['name'] ?? '-';
-      }
-    }
-
-    bytes += generator.text('Center:', styles: const PosStyles(bold: true));
+    bytes += generator.text('কেন্দ্র:', styles: const PosStyles(bold: true));
     bytes += generator.text(
-      center,
+      getCenter(),
       styles: const PosStyles(align: PosAlign.left),
     );
 
     bytes += generator.hr();
     bytes += generator.text(
-      'Thank You',
+      'ধন্যবাদ', // Thank You
       styles: const PosStyles(align: PosAlign.center, bold: true),
     );
     bytes += generator.feed(3);
     bytes += generator.cut();
 
     await PrintBluetoothThermal.writeBytes(bytes);
+  }
+
+  String _toBanglaNumber(String input) {
+    const eng = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const bang = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+
+    for (int i = 0; i < eng.length; i++) {
+      input = input.replaceAll(eng[i], bang[i]);
+    }
+    return input;
   }
 }

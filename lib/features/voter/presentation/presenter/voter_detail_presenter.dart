@@ -294,14 +294,158 @@ class VoterDetailPresenter extends GetxController {
                 );
               }),
               const SizedBox(height: 16),
-              TextButton(
-                onPressed: () => Get.back(),
-                child: const Text('বন্ধ করুন'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Get.back();
+                      _showReceiptPreview();
+                    },
+                    child: const Text('রিসিট প্রিভিউ'),
+                  ),
+                  TextButton(
+                    onPressed: () => Get.back(),
+                    child: const Text('বন্ধ করুন'),
+                  ),
+                ],
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _showReceiptPreview() {
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        child: SingleChildScrollView(
+          child: Container(
+            width: 300, // Approximate width for 58mm style preview on phone
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  'ভোটার স্লিপ',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const Text(
+                  'ঢাকা ৫ আসন',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'তারিখ: ${_formatDate(DateTime.now())}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 14, color: Colors.black),
+                ),
+                const Divider(color: Colors.black, thickness: 1),
+                _buildPreviewRow('সিরিয়াল:', serial),
+                _buildPreviewRow('নাম:', name),
+                _buildPreviewRow('পিতা:', fatherName),
+                _buildPreviewRow('মা:', motherName),
+                _buildPreviewRow('লিঙ্গ:', gender),
+                _buildPreviewRow('এলাকা:', area),
+                _buildPreviewRow('জন্ম তারিখ:', dob),
+                _buildPreviewRow('ভোটার নং:', voterId),
+                //_buildPreviewRow('Address:', address),
+                const Divider(color: Colors.black, thickness: 1),
+                const Text(
+                  'কেন্দ্র:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+                Text(
+                  centerName,
+                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                ),
+                const Divider(color: Colors.black, thickness: 1),
+                const SizedBox(height: 16),
+                const Text(
+                  'ধন্যবাদ',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () => Get.back(),
+                    child: const Text('Close'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPreviewRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 4,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 8,
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: const TextStyle(fontSize: 14, color: Colors.black),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(DateTime now) {
+    String formatted =
+        "${now.day}/${now.month}/${now.year} ${now.hour}:${now.minute}";
+    return _toBanglaNumber(formatted);
+  }
+
+  String _toBanglaNumber(String input) {
+    const eng = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const bang = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+
+    for (int i = 0; i < eng.length; i++) {
+      input = input.replaceAll(eng[i], bang[i]);
+    }
+    return input;
   }
 }
