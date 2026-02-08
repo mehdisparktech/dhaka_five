@@ -3,10 +3,12 @@ class AppTexts {
   static const subtitle = 'আপনার ভোটার তথ্য খুঁজে বের করুন';
   static const searchType = 'খোঁজার ধরন';
   static const name = 'নাম';
+  static const nameWithDob = 'নাম ও জন্ম তারিখ';
   static const voterIdNumber = 'ভোটার আইডি নম্বর';
   static const fathersName = 'পিতার নাম';
   static const mothersName = 'মাতার নাম';
   static const address = 'ঠিকানা';
+  static const area = 'এলাকা';
   static const writeInBangla = 'বাংলায় লিখুন';
   static const dob = 'জন্ম তারিখ';
   static const search = 'খুঁজুন';

@@ -1,6 +1,8 @@
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
+import '../utils/digit_converter.dart';
+
 class ThermalPrinterService {
   ThermalPrinterService._();
   static final ThermalPrinterService instance = ThermalPrinterService._();
@@ -92,7 +94,7 @@ class ThermalPrinterService {
     final dateStr =
         "${now.day}/${now.month}/${now.year} ${now.hour}:${now.minute}";
     bytes += generator.text(
-      'তারিখ: ${_toBanglaNumber(dateStr)}', // Date
+      'তারিখ: ${DigitConverter.enToBn(dateStr)}', // Date
       styles: const PosStyles(
         align: PosAlign.center,
         fontType: PosFontType.fontB,
@@ -121,19 +123,19 @@ class ThermalPrinterService {
 
     // Field Order: Serial, Name, Father, Mother, Gender, Area, DOB, Voter No
 
-    addRow('সিরিয়াল:', val('serial', def: '-'));
+    addRow('সিরিয়াল:', DigitConverter.enToBn(val('serial', def: '-')));
     addRow('নাম:', val('name', def: 'নাম পাওয়া যায়নি'));
     addRow('পিতা:', val('fathers_name'));
     addRow('মা:', val('mothers_name'));
-    addRow('লিঙ্গ:', val('gender', def: '-'));
+    addRow('লিঙ্গ:', DigitConverter.genderToBangla(val('gender', def: '-')));
     addRow('এলাকা:', getArea());
-    addRow('জন্ম তারিখ:', val('dob', def: val('date_of_birth', def: '-')));
+    addRow('জন্ম তারিখ:', DigitConverter.enToBn(val('dob', def: val('date_of_birth', def: '-'))));
 
     String vNo = val('voter_id');
     if (vNo == '-') {
       vNo = val('serial', def: '-');
     }
-    addRow('ভোটার নং:', vNo);
+    addRow('ভোটার নং:', DigitConverter.enToBn(vNo));
 
     bytes += generator.hr();
 
@@ -153,15 +155,5 @@ class ThermalPrinterService {
     bytes += generator.cut();
 
     await PrintBluetoothThermal.writeBytes(bytes);
-  }
-
-  String _toBanglaNumber(String input) {
-    const eng = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    const bang = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-
-    for (int i = 0; i < eng.length; i++) {
-      input = input.replaceAll(eng[i], bang[i]);
-    }
-    return input;
   }
 }

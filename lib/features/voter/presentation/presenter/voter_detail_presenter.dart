@@ -9,6 +9,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../../../../core/services/thermal_printer_service.dart';
+import '../../../../core/utils/digit_converter.dart';
 
 class VoterDetailPresenter extends GetxController {
   final Map voter;
@@ -31,12 +32,29 @@ class VoterDetailPresenter extends GetxController {
   String get fatherName => _field('fathers_name');
   String get motherName => _field('mothers_name');
   String get husbandName => _field('husband_name', fallback: 'প্রযোজ্য নয়');
-  String get voterId =>
-      _field('voter_id', fallback: _field('serial', fallback: '-'));
-  String get serial => _field('serial', fallback: '-');
-  String get dob =>
-      _field('dob', fallback: _field('date_of_birth', fallback: '-'));
-  String get gender => _field('gender', fallback: '-');
+  String get voterId {
+    final value = _field('voter_id', fallback: _field('serial', fallback: '-'));
+    return DigitConverter.enToBn(value);
+  }
+
+  String get serial {
+    final value = _field('serial', fallback: '-');
+    return DigitConverter.enToBn(value);
+  }
+
+  String get dob {
+    final value = _field(
+      'dob',
+      fallback: _field('date_of_birth', fallback: '-'),
+    );
+    return DigitConverter.enToBn(value);
+  }
+
+  String get gender {
+    final value = _field('gender', fallback: '-');
+    return DigitConverter.genderToBangla(value);
+  }
+
   String get address => _field('address');
 
   String get area {
@@ -436,16 +454,6 @@ class VoterDetailPresenter extends GetxController {
   String _formatDate(DateTime now) {
     String formatted =
         "${now.day}/${now.month}/${now.year} ${now.hour}:${now.minute}";
-    return _toBanglaNumber(formatted);
-  }
-
-  String _toBanglaNumber(String input) {
-    const eng = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    const bang = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-
-    for (int i = 0; i < eng.length; i++) {
-      input = input.replaceAll(eng[i], bang[i]);
-    }
-    return input;
+    return DigitConverter.enToBn(formatted);
   }
 }

@@ -20,4 +20,44 @@ class DigitConverter {
     }
     return input;
   }
+
+  /// লিঙ্গ (Gender) ইংরেজি থেকে বাংলায় রূপান্তর
+  /// "Male" → "পুরুষ", "Female" → "মহিলা", "M" → "পুরুষ", "F" → "মহিলা"
+  static String genderToBangla(String input) {
+    if (input.isEmpty || input == '-') return input;
+
+    final trimmed = input.trim();
+    final upper = trimmed.toUpperCase();
+
+    // ইংরেজি লিঙ্গ মানগুলো বাংলায় রূপান্তর
+    switch (upper) {
+      case 'MALE':
+      case 'M':
+        return 'পুরুষ';
+      case 'FEMALE':
+      case 'F':
+        return 'মহিলা';
+      default:
+        // যদি ইতিমধ্যে বাংলায় থাকে বা অন্য কোনো মান হয়, শুধু সংখ্যাগুলো কনভার্ট করি
+        return enToBn(trimmed);
+    }
+  }
+
+  /// লিঙ্গ (Gender) বাংলা থেকে ইংরেজিতে রূপান্তর
+  /// "পুরুষ" → "Male", "মহিলা" → "Female"
+  static String genderToEnglish(String input) {
+    if (input.isEmpty || input == '-') return input;
+
+    final trimmed = input.trim();
+
+    // বাংলা লিঙ্গ মানগুলো ইংরেজিতে রূপান্তর
+    if (trimmed == 'পুরুষ') {
+      return 'male';
+    } else if (trimmed == 'মহিলা') {
+      return 'female';
+    }
+
+    // যদি ইতিমধ্যে ইংরেজিতে থাকে, সেটাই রিটার্ন করি
+    return trimmed;
+  }
 }

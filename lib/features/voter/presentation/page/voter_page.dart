@@ -203,10 +203,12 @@ class VoterPage extends StatelessWidget {
                                   value: presenter.searchType.value,
                                   items: const [
                                     AppTexts.name,
+                                    AppTexts.nameWithDob,
                                     AppTexts.voterIdNumber,
                                     AppTexts.fathersName,
                                     AppTexts.mothersName,
                                     AppTexts.address,
+                                    AppTexts.area,
                                   ],
                                   onChanged: (value) {
                                     if (value == null) return;
@@ -228,6 +230,11 @@ class VoterPage extends StatelessWidget {
                                     } else if (currentType ==
                                         AppTexts.address) {
                                       return 'ঠিকানা (বাংলায় লিখুন)';
+                                    } else if (currentType == AppTexts.area) {
+                                      return 'স্থানীয় প্রশাসন (ঐচ্ছিক)';
+                                    } else if (currentType ==
+                                        AppTexts.nameWithDob) {
+                                      return 'নাম (বাংলায় লিখুন)';
                                     }
                                     return 'নাম (বাংলায় লিখুন)';
                                   }(),
@@ -237,43 +244,46 @@ class VoterPage extends StatelessWidget {
                                 ),
                                 // Name/Input Field - Visible for all types
                                 const SizedBox(height: 8),
-                                AppTextField(
-                                  hint: () {
-                                    if (isVoterId) {
-                                      return 'ভোটার আইডি নম্বর লিখুন';
-                                    } else if (currentType ==
-                                        AppTexts.fathersName) {
-                                      return 'পিতার নাম লিখুন...';
-                                    } else if (currentType ==
-                                        AppTexts.mothersName) {
-                                      return 'মাতার নাম লিখুন...';
-                                    } else if (currentType ==
-                                        AppTexts.address) {
-                                      return 'ঠিকানা লিখুন...';
-                                    }
-                                    return 'নাম লিখুন...';
-                                  }(),
-                                  controller: presenter.nameController,
-                                  keyboardType: isVoterId
-                                      ? TextInputType.number
-                                      : TextInputType.text,
-                                ),
+                                Obx(() {
+                                  // Hide text field for area search only
+                                  if (presenter.isSearchByArea) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return AppTextField(
+                                    hint: () {
+                                      if (isVoterId) {
+                                        return 'ভোটার আইডি নম্বর লিখুন';
+                                      } else if (currentType ==
+                                          AppTexts.fathersName) {
+                                        return 'পিতার নাম লিখুন...';
+                                      } else if (currentType ==
+                                          AppTexts.mothersName) {
+                                        return 'মাতার নাম লিখুন...';
+                                      } else if (currentType ==
+                                          AppTexts.address) {
+                                        return 'ঠিকানা লিখুন...';
+                                      } else if (currentType ==
+                                          AppTexts.nameWithDob) {
+                                        return 'নাম লিখুন...';
+                                      }
+                                      return 'নাম লিখুন...';
+                                    }(),
+                                    controller: presenter.nameController,
+                                    keyboardType: isVoterId
+                                        ? TextInputType.number
+                                        : TextInputType.text,
+                                  );
+                                }),
 
-                                // Optional Dropdowns for Address Search
-                                if (presenter.isSearchByAddress)
+                                // Optional Dropdowns for Area Search only
+                                if (presenter.isSearchByArea)
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const SizedBox(height: 16),
-                                      // Local Administration Dropdown
-                                      const Text(
-                                        'স্থানীয় প্রশাসন (ঐচ্ছিক)',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
                                       const SizedBox(height: 8),
+
+                                      // Local Administration Dropdown
                                       Obx(
                                         () => AppDropdown(
                                           value:
@@ -336,6 +346,37 @@ class VoterPage extends StatelessWidget {
                                             ),
                                           ),
                                         ),
+                                      const SizedBox(height: 16),
+                                      // Gender Dropdown
+                                      const Text(
+                                        'লিঙ্গ (ঐচ্ছিক)',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Obx(
+                                        () => AppDropdown(
+                                          value:
+                                              presenter.selectedGender.value ??
+                                              'সব লিঙ্গ',
+                                          items: const [
+                                            'সব লিঙ্গ',
+                                            'পুরুষ',
+                                            'মহিলা',
+                                          ],
+                                          onChanged: (value) {
+                                            presenter.selectedGender.value =
+                                                value == 'সব লিঙ্গ'
+                                                ? null
+                                                : value;
+                                          },
+                                          onClear: () {
+                                            presenter.selectedGender.value =
+                                                null;
+                                          },
+                                        ),
+                                      ),
                                     ],
                                   ),
                               ],
@@ -343,7 +384,11 @@ class VoterPage extends StatelessWidget {
                           }),
 
                           Obx(() {
-                            if (presenter.isSearchByAddress) {
+                            // Show DOB only for nameWithDob, father's name, and mother's name
+                            if (presenter.isSearchByAddress ||
+                                presenter.isSearchByArea ||
+                                presenter.isSearchByName ||
+                                presenter.isSearchByVoterId) {
                               return const SizedBox.shrink();
                             }
                             return Column(
@@ -376,10 +421,13 @@ class VoterPage extends StatelessWidget {
                                       FocusScope.of(context).unfocus();
                                       await presenter.search();
                                       final voters = presenter.state.voters;
+                                      final totalCount =
+                                          presenter.state.totalCount;
                                       if (voters.isNotEmpty) {
                                         Get.to(
                                           () => VoterResultPage(
                                             voters: List.from(voters),
+                                            totalCount: totalCount,
                                           ),
                                         );
                                       } else {

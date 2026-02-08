@@ -21,14 +21,25 @@ class AppDropdown extends StatelessWidget {
     final bool isSelected = items.contains(value);
 
     return DropdownButtonFormField<String>(
+      isExpanded: true,
       initialValue: isSelected ? value : null,
       hint: Text(value, maxLines: 1, overflow: TextOverflow.ellipsis),
       items: items
-          .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+          .map(
+            (e) => DropdownMenuItem(
+              value: e,
+              child: Text(e, maxLines: 1, overflow: TextOverflow.ellipsis),
+            ),
+          )
           .toList(),
       onChanged: onChanged,
       // Ensure the dropdown menu has a decent height relative to screen or items
       menuMaxHeight: 400,
+      selectedItemBuilder: (BuildContext context) {
+        return items.map<Widget>((String item) {
+          return Text(item, maxLines: 1, overflow: TextOverflow.ellipsis);
+        }).toList();
+      },
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,

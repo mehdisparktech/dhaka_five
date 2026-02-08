@@ -11,7 +11,7 @@ import '../../../../core/services/nid_ocr_service.dart';
 import '../../../../core/utils/digit_converter.dart';
 import '../../../../core/utils/validators.dart';
 import '../../data/voter_history_service.dart';
-import '../../data/voter_remote_source.dart';
+import '../../data/voter_local_source.dart';
 import '../ui_state/voter_ui_state.dart';
 
 class VoterPresenter extends GetxController {
@@ -27,9 +27,12 @@ class VoterPresenter extends GetxController {
   final RxString searchType = AppTexts.name.obs;
 
   bool get isSearchByVoterId => searchType.value == AppTexts.voterIdNumber;
+  bool get isSearchByName => searchType.value == AppTexts.name;
+  bool get isSearchByNameWithDob => searchType.value == AppTexts.nameWithDob;
   bool get isSearchByFatherName => searchType.value == AppTexts.fathersName;
   bool get isSearchByMotherName => searchType.value == AppTexts.mothersName;
   bool get isSearchByAddress => searchType.value == AppTexts.address;
+  bool get isSearchByArea => searchType.value == AppTexts.area;
 
   int page = 1;
   final VoterHistoryService _historyService = VoterHistoryService();
@@ -48,6 +51,9 @@ class VoterPresenter extends GetxController {
   final RxList<String> availableAreas = <String>[].obs;
   final Rx<String?> selectedArea = Rx<String?>(null);
 
+  // Gender filter for address search
+  final Rx<String?> selectedGender = Rx<String?>(null);
+
   @override
   void onInit() {
     super.onInit();
@@ -62,7 +68,7 @@ class VoterPresenter extends GetxController {
       final data = await json.decode(response);
       wards.value = List<Map<String, dynamic>>.from(data['wards']);
     } catch (e) {
-      print('Error loading locations: $e');
+      debugPrint('Error loading locations: $e');
     }
   }
 
@@ -100,18 +106,34 @@ class VoterPresenter extends GetxController {
     final mEn = DigitConverter.bnToEn(rawMonth);
     final yEn = DigitConverter.bnToEn(rawYear);
 
-    // Address search does not require DOB
-    bool isDateRequired = !isSearchByAddress;
+    // Only nameWithDob, father's name, and mother's name require DOB
+    bool isDateRequired =
+        isSearchByNameWithDob || isSearchByFatherName || isSearchByMotherName;
 
-    if (!isSearchByAddress && Validators.isEmpty(rawName)) {
+    if (!isSearchByAddress && !isSearchByArea && Validators.isEmpty(rawName)) {
       _state.value = state.copyWith(error: 'সঠিক তথ্য প্রদান করুন');
       return;
     }
 
     if (isSearchByAddress && Validators.isEmpty(rawName)) {
-      // Address search now uses the text field, so it must not be empty
+      // Address search: text field is required
       _state.value = state.copyWith(error: 'অনুগ্রহ করে ঠিকানা লিখুন');
       return;
+    }
+
+    if (isSearchByArea) {
+      // Area search: at least ward or area must be selected
+      final hasWard =
+          selectedWard.value != null && selectedWard.value!.isNotEmpty;
+      final hasArea =
+          selectedArea.value != null && selectedArea.value!.isNotEmpty;
+
+      if (!hasWard && !hasArea) {
+        _state.value = state.copyWith(
+          error: 'অনুগ্রহ করে স্থানীয় প্রশাসন অথবা এলাকা নির্বাচন করুন',
+        );
+        return;
+      }
     }
 
     // Dropdowns are now optional for Address search, so no validation needed for them.
@@ -133,9 +155,13 @@ class VoterPresenter extends GetxController {
     try {
       // API তে ডাটা সবসময় বাংলায় পাঠানোর জন্য
       // (ইউজার ইংরেজি ডিজিট লিখলে সেটাকেও বাংলায় কনভার্ট করছি)
-      final searchValueBn = isSearchByAddress
-          ? rawName // Address is typed manually now
+      final searchValueBn = (isSearchByAddress || isSearchByArea)
+          ? rawName
+                .trim() // Address/Area is typed manually now, trim whitespace
           : DigitConverter.enToBn(rawName);
+
+      debugPrint('Address search - searchValueBn: "$searchValueBn"');
+      debugPrint('Address search - isSearchByAddress: $isSearchByAddress');
 
       final dobDayBn = DigitConverter.enToBn(dEn);
       final dobMonthBn = DigitConverter.enToBn(mEn);
@@ -147,12 +173,16 @@ class VoterPresenter extends GetxController {
       String apiSearchType;
       if (isSearchByVoterId) {
         apiSearchType = 'voter_id';
+      } else if (isSearchByNameWithDob) {
+        apiSearchType = 'name';
       } else if (isSearchByFatherName) {
         apiSearchType = 'fathers_name';
       } else if (isSearchByMotherName) {
         apiSearchType = 'mothers_name';
       } else if (isSearchByAddress) {
         apiSearchType = 'address';
+      } else if (isSearchByArea) {
+        apiSearchType = 'area';
       } else {
         apiSearchType = 'name';
       }
@@ -163,14 +193,23 @@ class VoterPresenter extends GetxController {
         'dob_day': dobDayBn,
         'dob_month': dobMonthBn,
         'dob_year': dobYearBn,
+        'page': page,
+        'limit': 1000, // Increased limit per page for better results
       };
 
-      if (isSearchByAddress) {
+      if (isSearchByArea) {
+        // Area search: include ward, area, and gender filters
+        debugPrint('Area search payload - selectedWard: ${selectedWard.value}');
+        debugPrint('Area search payload - selectedArea: ${selectedArea.value}');
+
         if (selectedWard.value != null) {
           payload['local_administrative_area'] = selectedWard.value!;
         }
         if (selectedArea.value != null) {
-          // Find ID from the cached objects
+          // Pass the area name directly for vote_area_name matching
+          payload['selected_area'] = selectedArea.value!;
+
+          // Also pass area_id if available (for vote_area_no matching)
           final areaObj = _currentWardAreas.firstWhere(
             (element) => element['voting_area_name'] == selectedArea.value,
             orElse: () => {},
@@ -179,10 +218,21 @@ class VoterPresenter extends GetxController {
             payload['area_id'] = areaObj['id'];
           }
         }
+
+        // Add gender filter if selected (convert Bengali to English for database)
+        if (selectedGender.value != null && selectedGender.value!.isNotEmpty) {
+          payload['gender'] = DigitConverter.genderToEnglish(
+            selectedGender.value!,
+          );
+        }
+
+        debugPrint('Area search final payload: $payload');
       }
 
-      final res = await VoterRemoteSource().search(payload);
+      final res = await VoterLocalSource().search(payload);
       final newVoters = res['voters'] ?? [];
+      final totalCount = res['total'] as int? ?? 0;
+      final limit = payload['limit'] as int? ?? 1000;
 
       // If the API returns a list, we append it.
       // Often search APIs return everything or a specific page.
@@ -192,9 +242,13 @@ class VoterPresenter extends GetxController {
           ? [...state.voters, ...newVoters]
           : newVoters;
 
+      // hasMore is true if we got a full page (limit results), indicating more might be available
+      final hasMoreResults = newVoters.length >= limit;
+
       _state.value = state.copyWith(
         voters: finalVoters,
-        hasMore: newVoters.isNotEmpty, // Simple pagination check
+        hasMore: hasMoreResults,
+        totalCount: totalCount,
         loading: false,
         loadingMore: false,
       );
@@ -210,6 +264,10 @@ class VoterPresenter extends GetxController {
           historySearchType = AppTexts.mothersName;
         } else if (isSearchByAddress) {
           historySearchType = AppTexts.address;
+        } else if (isSearchByArea) {
+          historySearchType = AppTexts.area;
+        } else if (isSearchByNameWithDob) {
+          historySearchType = AppTexts.nameWithDob;
         } else {
           historySearchType = AppTexts.name;
         }

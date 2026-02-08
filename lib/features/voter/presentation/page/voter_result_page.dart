@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/digit_converter.dart';
 import '../widgets/voter_result_card.dart';
 import 'voter_detail_page.dart';
 
 class VoterResultPage extends StatelessWidget {
   final List voters;
+  final int totalCount;
 
-  const VoterResultPage({super.key, required this.voters});
+  const VoterResultPage({super.key, required this.voters, this.totalCount = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +45,9 @@ class VoterResultPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${voters.length} টি ফলাফল',
+                  totalCount > 0
+                      ? '${DigitConverter.enToBn(voters.length.toString())} / ${DigitConverter.enToBn(totalCount.toString())} টি ফলাফল'
+                      : '${DigitConverter.enToBn(voters.length.toString())} টি ফলাফল',
                   style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.textLight,

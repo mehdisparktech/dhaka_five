@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/digit_converter.dart';
 import '../presenter/voter_history_presenter.dart';
 import 'voter_result_page.dart';
 
@@ -184,7 +185,10 @@ class VoterHistoryPage extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         Get.to(
-                          () => VoterResultPage(voters: List.from(voters)),
+                          () => VoterResultPage(
+                            voters: List.from(voters),
+                            totalCount: voters.length,
+                          ),
                         );
                       },
                       borderRadius: BorderRadius.circular(8),
@@ -219,7 +223,7 @@ class VoterHistoryPage extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        'জন্ম তারিখ: $dobDay/$dobMonth/$dobYear',
+                                        'জন্ম তারিখ: ${DigitConverter.enToBn(dobDay)}/${DigitConverter.enToBn(dobMonth)}/${DigitConverter.enToBn(dobYear)}',
                                         style: const TextStyle(
                                           fontSize: 12,
                                           color: AppColors.textLight,
@@ -238,7 +242,7 @@ class VoterHistoryPage extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
-                                    '$voterCount টি',
+                                    '${DigitConverter.enToBn(voterCount.toString())} টি',
                                     style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -257,6 +261,7 @@ class VoterHistoryPage extends StatelessWidget {
                                       Get.to(
                                         () => VoterResultPage(
                                           voters: List.from(voters),
+                                          totalCount: voters.length,
                                         ),
                                       );
                                     },
@@ -340,15 +345,15 @@ class VoterHistoryPage extends StatelessWidget {
           if (difference.inMinutes == 0) {
             return 'এখনই';
           }
-          return '${difference.inMinutes} মিনিট আগে';
+          return '${DigitConverter.enToBn(difference.inMinutes.toString())} মিনিট আগে';
         }
-        return '${difference.inHours} ঘন্টা আগে';
+        return '${DigitConverter.enToBn(difference.inHours.toString())} ঘন্টা আগে';
       } else if (difference.inDays == 1) {
         return 'গতকাল';
       } else if (difference.inDays < 7) {
-        return '${difference.inDays} দিন আগে';
+        return '${DigitConverter.enToBn(difference.inDays.toString())} দিন আগে';
       } else {
-        return '${date.day}/${date.month}/${date.year}';
+        return '${DigitConverter.enToBn(date.day.toString())}/${DigitConverter.enToBn(date.month.toString())}/${DigitConverter.enToBn(date.year.toString())}';
       }
     } catch (e) {
       return isoString;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/digit_converter.dart';
 
 class VoterResultCard extends StatelessWidget {
   final Map voter;
@@ -12,9 +13,10 @@ class VoterResultCard extends StatelessWidget {
     final String name = (voter['name'] ?? '').toString();
     final String fathersName = (voter['fathers_name'] ?? '').toString();
     // API theke asha `serial` key use korbo, na paile `voter_id`
-    final String serial = (voter['serial'] ?? voter['voter_id'] ?? '')
+    final String serialRaw = (voter['serial'] ?? voter['voter_id'] ?? '')
         .toString()
         .trim();
+    final String serial = DigitConverter.enToBn(serialRaw);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),

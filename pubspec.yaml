@@ -49,6 +49,8 @@ dependencies:
   permission_handler: ^12.0.1
   print_bluetooth_thermal: ^1.1.2
   esc_pos_utils_plus: ^2.0.3
+  sqflite: ^2.3.3+2
+
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +78,7 @@ flutter:
   assets:
     - assets/images/
     - assets/json/
+    - assets/database/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

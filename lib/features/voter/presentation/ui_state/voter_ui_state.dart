@@ -4,6 +4,7 @@ class VoterUiState {
   final List voters;
   final String? error;
   final bool hasMore;
+  final int totalCount;
 
   VoterUiState({
     this.loading = false,
@@ -11,6 +12,7 @@ class VoterUiState {
     this.voters = const [],
     this.error,
     this.hasMore = true,
+    this.totalCount = 0,
   });
 
   VoterUiState copyWith({
@@ -19,6 +21,7 @@ class VoterUiState {
     List? voters,
     String? error,
     bool? hasMore,
+    int? totalCount,
   }) {
     return VoterUiState(
       loading: loading ?? this.loading,
@@ -26,6 +29,7 @@ class VoterUiState {
       voters: voters ?? this.voters,
       error: error,
       hasMore: hasMore ?? this.hasMore,
+      totalCount: totalCount ?? this.totalCount,
     );
   }
 }
