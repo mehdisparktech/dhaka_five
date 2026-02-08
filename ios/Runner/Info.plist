@@ -5,7 +5,7 @@
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
-		<string>দাঁড়িপাল্লা</string>
+		<string>ঢাকা-৫</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -45,11 +45,11 @@
 		<true/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
-	<key>UIStatusBarHidden</key>
-	<false/>
-	<key>NSCameraUsageDescription</key>
-	<string>NID কার্ডের ছবি তোলার জন্য ক্যামেরা ব্যবহার করা হবে</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>NID কার্ডের ছবি নির্বাচনের জন্য ফটো লাইব্রেরি ব্যবহার করা হবে</string>
-</dict>
+		<key>UIStatusBarHidden</key>
+		<false/>
+		<key>NSCameraUsageDescription</key>
+		<string>NID কার্ডের ছবি তোলার জন্য ক্যামেরা ব্যবহার করা হবে</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>NID কার্ডের ছবি নির্বাচনের জন্য ফটো লাইব্রেরি ব্যবহার করা হবে</string>
+	</dict>
 </plist>

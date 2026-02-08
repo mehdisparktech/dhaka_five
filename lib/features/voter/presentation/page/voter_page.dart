@@ -60,9 +60,16 @@ class VoterPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: AppColors.border),
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/cover.png'),
-                          fit: BoxFit.cover,
+                      ),
+                      child: Center(
+                        child: Text(
+                          'আপনার ভোটার তথ্য খুঁজুন',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textDark,
+                          ),
                         ),
                       ),
                     ),
