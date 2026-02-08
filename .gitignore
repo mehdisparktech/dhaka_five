@@ -61,5 +61,4 @@ app.*.map.json
 
 #database
 /assets/database/
-
-.db
+*.db
