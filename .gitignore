@@ -43,3 +43,23 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/app/build
+
+# iOS
+/ios/build
+/ios/Pods
+/ios/Runner.xcodeproj
+/ios/Runner.xcworkspace
+/ios/Runner.xcuserdata
+/ios/Runner.xccheckout
+/ios/Runner.xcscmblueprint
+/ios/Runner.xccheckout
+/ios/Runner.xccheckout
+/ios/Runner.xccheckout
+/ios/Runner.xccheckout
+
+
+#database
+/assets/database/
+
+.db
