@@ -106,9 +106,8 @@ class VoterPresenter extends GetxController {
     final mEn = DigitConverter.bnToEn(rawMonth);
     final yEn = DigitConverter.bnToEn(rawYear);
 
-    // Only nameWithDob, father's name, and mother's name require DOB
-    bool isDateRequired =
-        isSearchByNameWithDob || isSearchByFatherName || isSearchByMotherName;
+    // Only nameWithDob requires DOB (নাম + জন্ম তারিখ)
+    bool isDateRequired = isSearchByNameWithDob;
 
     if (!isSearchByAddress && !isSearchByArea && Validators.isEmpty(rawName)) {
       _state.value = state.copyWith(error: 'সঠিক তথ্য প্রদান করুন');
@@ -155,13 +154,10 @@ class VoterPresenter extends GetxController {
     try {
       // API তে ডাটা সবসময় বাংলায় পাঠানোর জন্য
       // (ইউজার ইংরেজি ডিজিট লিখলে সেটাকেও বাংলায় কনভার্ট করছি)
+      final trimmedRawName = rawName.trim();
       final searchValueBn = (isSearchByAddress || isSearchByArea)
-          ? rawName
-                .trim() // Address/Area is typed manually now, trim whitespace
-          : DigitConverter.enToBn(rawName);
-
-      debugPrint('Address search - searchValueBn: "$searchValueBn"');
-      debugPrint('Address search - isSearchByAddress: $isSearchByAddress');
+          ? trimmedRawName // Address/Area is typed manually now, trim whitespace
+          : DigitConverter.enToBn(trimmedRawName);
 
       final dobDayBn = DigitConverter.enToBn(dEn);
       final dobMonthBn = DigitConverter.enToBn(mEn);
@@ -186,6 +182,16 @@ class VoterPresenter extends GetxController {
       } else {
         apiSearchType = 'name';
       }
+
+      debugPrint('=== Search Debug Info ===');
+      debugPrint('Search type: $apiSearchType');
+      debugPrint('Raw name input: "$rawName"');
+      debugPrint('Trimmed name: "$trimmedRawName"');
+      debugPrint('Search value (Bengali): "$searchValueBn"');
+      debugPrint('Is search by name: $isSearchByName');
+      debugPrint('Is search by address: $isSearchByAddress');
+      debugPrint('Is search by area: $isSearchByArea');
+      debugPrint('========================');
 
       final payload = {
         'search_type': apiSearchType,

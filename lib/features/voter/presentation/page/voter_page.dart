@@ -55,15 +55,20 @@ class VoterPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      height: 240,
+                      height: 200,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: AppColors.border),
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/logo.png'),
+                          fit: BoxFit.contain,
+                        ),
                       ),
-                      child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 10, top: 10),
                         child: Text(
-                          'আপনার ভোটার তথ্য খুঁজুন',
+                          'ত্রয়োদশ জাতীয় সংসদ নির্বাচন ২০২৬',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 20,
@@ -71,15 +76,6 @@ class VoterPage extends StatelessWidget {
                             color: AppColors.textDark,
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      AppTexts.subtitle,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: AppColors.textDark,
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
 
@@ -391,11 +387,9 @@ class VoterPage extends StatelessWidget {
                           }),
 
                           Obx(() {
-                            // Show DOB only for nameWithDob, father's name, and mother's name
-                            if (presenter.isSearchByAddress ||
-                                presenter.isSearchByArea ||
-                                presenter.isSearchByName ||
-                                presenter.isSearchByVoterId) {
+                            // Show DOB only for nameWithDob (নাম + জন্ম তারিখ)
+                            // Hide DOB for: name, father's name, mother's name, address, area, voter_id
+                            if (!presenter.isSearchByNameWithDob) {
                               return const SizedBox.shrink();
                             }
                             return Column(

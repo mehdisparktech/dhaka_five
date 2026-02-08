@@ -25,22 +25,42 @@ class VoterLocalSource {
       switch (searchType) {
         case 'voter_id':
           whereClause = 'voter_no LIKE ?';
-          whereArgs.add('%$searchValue%');
+          whereArgs.add('%${searchValue.trim()}%');
           break;
 
         case 'name':
-          whereClause = 'name LIKE ?';
-          whereArgs.add('%$searchValue%');
+          // Trim and ensure search value is not empty
+          final trimmedName = searchValue.trim();
+          if (trimmedName.isEmpty) {
+            whereClause = '1=0'; // Return no results if empty
+          } else {
+            // Search in name column with trimmed value
+            whereClause = 'name LIKE ?';
+            whereArgs.add('%$trimmedName%');
+            debugPrint('Name search: name LIKE %$trimmedName%');
+          }
           break;
 
         case 'fathers_name':
-          whereClause = 'fathers_name LIKE ?';
-          whereArgs.add('%$searchValue%');
+          final trimmedFatherName = searchValue.trim();
+          if (trimmedFatherName.isEmpty) {
+            whereClause = '1=0';
+          } else {
+            whereClause = 'fathers_name LIKE ?';
+            whereArgs.add('%$trimmedFatherName%');
+            debugPrint('Father name search: fathers_name LIKE %$trimmedFatherName%');
+          }
           break;
 
         case 'mothers_name':
-          whereClause = 'mothers_name LIKE ?';
-          whereArgs.add('%$searchValue%');
+          final trimmedMotherName = searchValue.trim();
+          if (trimmedMotherName.isEmpty) {
+            whereClause = '1=0';
+          } else {
+            whereClause = 'mothers_name LIKE ?';
+            whereArgs.add('%$trimmedMotherName%');
+            debugPrint('Mother name search: mothers_name LIKE %$trimmedMotherName%');
+          }
           break;
 
         case 'area':
